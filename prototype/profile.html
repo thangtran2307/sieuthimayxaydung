@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tân Minh Machinery — MayXayDung</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  .profile-cover { height:220px; object-fit:cover; width:100%; display:block; }
+  @media (max-width:639px){ .profile-cover{ height:140px; } }
+  .avatar-ring { border:4px solid #fff; box-shadow:var(--shadow-md); }
+  .tab-btn { padding:.55rem 1.1rem; font-weight:600; font-size:.93rem; border:none; background:transparent; cursor:pointer;
+    color:var(--steel-500); border-bottom:2px solid transparent; transition:color .15s,border-color .15s; }
+  .tab-btn.active { color:var(--accent-600); border-bottom-color:var(--accent-600); }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .boost-banner { background:linear-gradient(120deg,#1e3a5f,#ea580c); border-radius:var(--radius); padding:1.1rem 1.5rem;
+    color:#fff; display:flex; align-items:center; gap:1rem; }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="topbar desktop-only"><div class="container-wide flex items-center justify-between py-1.5">
+    <div class="flex items-center gap-2"><i data-lucide="phone" class="w-3.5 h-3.5"></i><span data-i18n="top.support">Hỗ trợ: 1900 6060</span></div>
+    <div class="flex items-center gap-5"><a href="#" data-i18n="top.help">Trợ giúp</a>
+      <div class="lang-toggle"><button data-lang="vi">VI</button><button data-lang="en">EN</button></div></div>
+  </div></div>
+  <div class="container-wide flex items-center justify-between py-3 gap-4">
+    <a href="index.html" class="brand-mark"><span class="brand-logo"><i data-lucide="hard-hat" class="w-5 h-5"></i></span>MayXayDung</a>
+    <nav class="desktop-only flex items-center gap-7 text-[.95rem]">
+      <a href="search.html" class="nav-link" data-i18n="nav.buy">Mua bán</a>
+      <a href="search.html" class="nav-link" data-i18n="nav.categories">Danh mục</a>
+      <a href="#" class="nav-link" data-i18n="nav.dealers">Nhà cung cấp</a>
+    </nav>
+    <div class="flex items-center gap-2.5">
+      <a href="login.html" class="btn btn-ghost desktop-only" data-i18n="nav.login">Đăng nhập</a>
+      <a href="post-listing.html" class="btn btn-accent"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="nav.post">Đăng tin</span></a>
+      <button id="burger" class="mobile-nav btn btn-ghost" aria-label="Menu"><i data-lucide="menu" class="w-5 h-5"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- breadcrumb -->
+<div class="container-wide pt-5 text-sm muted flex items-center gap-2">
+  <a href="index.html" class="hover:text-slate-700">MayXayDung</a>
+  <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+  <a href="search.html" class="hover:text-slate-700" data-i18n="nav.dealers">Nhà cung cấp</a>
+  <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+  <span class="text-slate-700 font-medium">Tân Minh Machinery</span>
+</div>
+
+<!-- ============ PROFILE HEADER ============ -->
+<div class="container-wide mt-4">
+  <div class="card overflow-hidden">
+    <!-- cover -->
+    <img class="profile-cover" src="https://placehold.co/1200x320/1e3a5f/ffffff?text=Tân+Minh+Machinery" alt="Cover">
+
+    <!-- avatar + info row -->
+    <div class="px-5 pb-5">
+      <div class="flex flex-wrap items-end gap-4" style="margin-top:-40px">
+        <!-- avatar -->
+        <div class="w-20 h-20 md:w-24 md:h-24 rounded-full grid place-items-center text-white font-bold text-2xl avatar-ring shrink-0" style="background:var(--brand)">TM</div>
+
+        <!-- name + meta -->
+        <div class="flex-1 pt-3 min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1 class="text-2xl" id="seller-name">Tân Minh Machinery</h1>
+            <span class="badge badge-verified"><i data-lucide="badge-check" class="w-3 h-3"></i> Đã xác minh</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 mt-1.5 text-sm muted">
+            <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> Quận 9, TP.HCM</span>
+            <span class="flex items-center gap-1.5"><i data-lucide="calendar" class="w-4 h-4"></i> Thành viên từ 2019</span>
+            <span class="flex items-center gap-1.5"><i data-lucide="clock" class="w-4 h-4"></i> Phản hồi trong 1 giờ</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mt-2">
+            <span class="badge badge-used">Máy đào</span>
+            <span class="badge badge-used">Xe nâng</span>
+            <span class="badge badge-used">Cần cẩu</span>
+          </div>
+        </div>
+
+        <!-- action buttons — shown when viewing ANOTHER user's profile -->
+        <div class="flex items-center gap-2 shrink-0" id="visitor-actions">
+          <a href="tel:09098899" class="btn btn-accent"><i data-lucide="phone" class="w-4 h-4"></i> Liên hệ ngay</a>
+          <button class="btn btn-ghost"><i data-lucide="heart" class="w-4 h-4"></i> Theo dõi</button>
+          <button class="btn btn-ghost"><i data-lucide="share-2" class="w-4 h-4"></i></button>
+        </div>
+
+        <!-- action buttons — shown when viewing OWN profile (toggle via JS) -->
+        <div class="flex items-center gap-2 shrink-0 hidden" id="own-actions">
+          <a href="post-listing.html" class="btn btn-accent"><i data-lucide="plus" class="w-4 h-4"></i> Đăng tin</a>
+          <button class="btn btn-ghost"><i data-lucide="pencil" class="w-4 h-4"></i> Sửa trang</button>
+          <a href="dashboard.html" class="btn btn-ghost"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- stats strip -->
+  <div class="grid grid-cols-3 gap-4 mt-4">
+    <div class="stat-tile text-center">
+      <div class="stat-num tabular">128</div>
+      <div class="text-sm muted mt-0.5">Tin đang đăng</div>
+    </div>
+    <div class="stat-tile text-center">
+      <div class="stat-num tabular">240K</div>
+      <div class="text-sm muted mt-0.5">Lượt xem</div>
+    </div>
+    <div class="stat-tile text-center">
+      <div class="stat-num tabular">97%</div>
+      <div class="text-sm muted mt-0.5">Tỷ lệ phản hồi</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TABS + CONTENT ============ -->
+<div class="container-wide py-6 grid lg:grid-cols-[1fr_300px] gap-6 items-start">
+
+  <div>
+    <!-- tab nav -->
+    <div style="border-bottom:2px solid var(--border);margin-bottom:1.5rem">
+      <button class="tab-btn active" onclick="switchTab('listings',this)">Tin đang đăng <span class="text-xs muted">(128)</span></button>
+      <button class="tab-btn" onclick="switchTab('about',this)">Giới thiệu</button>
+    </div>
+
+    <!-- listings tab -->
+    <div class="tab-panel active" id="tab-listings">
+      <!-- boost upsell — visible to own profile only, hidden for visitors -->
+      <div class="boost-banner mb-5 hidden" id="boost-upsell">
+        <i data-lucide="zap" class="w-8 h-8 shrink-0" style="color:#fcd34d"></i>
+        <div class="flex-1">
+          <div class="font-bold text-lg">Đẩy tin lên đầu tìm kiếm</div>
+          <div class="text-sm opacity-80 mt-0.5">Tin được ưu tiên nhận gấp 5× lượt xem. Bắt đầu từ 99.000 ₫/tuần.</div>
+        </div>
+        <a href="dashboard.html" class="btn shrink-0" style="background:#fff;color:var(--accent-600)"><i data-lucide="zap" class="w-4 h-4"></i> Đẩy tin ngay</a>
+      </div>
+
+      <div class="grid-listings" id="profile-listings"></div>
+
+      <!-- pagination -->
+      <nav class="flex items-center justify-center gap-1.5 mt-8">
+        <button class="btn btn-ghost btn-sm"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+        <button class="btn btn-brand btn-sm">1</button>
+        <button class="btn btn-ghost btn-sm">2</button>
+        <button class="btn btn-ghost btn-sm">3</button>
+        <span class="px-2 muted">…</span>
+        <button class="btn btn-ghost btn-sm">11</button>
+        <button class="btn btn-ghost btn-sm"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+      </nav>
+    </div>
+
+    <!-- about tab -->
+    <div class="tab-panel" id="tab-about">
+      <div class="card p-6 space-y-5">
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-2">Giới thiệu công ty</h3>
+          <p class="text-slate-600 leading-relaxed">Chuyên cung cấp máy đào, xe nâng và thiết bị nâng hạ nhập khẩu trực tiếp từ Nhật Bản và Hàn Quốc. Hơn 5 năm kinh nghiệm, bảo hành 12 tháng toàn bộ sản phẩm. Có xưởng dịch vụ và kho phụ tùng tại TP.HCM.</p>
+        </div>
+        <hr class="divider">
+        <div class="grid sm:grid-cols-2 gap-4 text-sm">
+          <div>
+            <div class="font-semibold text-slate-700 mb-1">Địa chỉ</div>
+            <div class="muted flex items-start gap-2"><i data-lucide="map-pin" class="w-4 h-4 mt-0.5 shrink-0"></i>123 Đường Nguyễn Văn Linh, Quận 9, TP.HCM</div>
+          </div>
+          <div>
+            <div class="font-semibold text-slate-700 mb-1">Website</div>
+            <div class="muted flex items-center gap-2"><i data-lucide="globe" class="w-4 h-4"></i>tanminhmachinery.vn</div>
+          </div>
+          <div>
+            <div class="font-semibold text-slate-700 mb-1">Giờ làm việc</div>
+            <div class="muted flex items-center gap-2"><i data-lucide="clock" class="w-4 h-4"></i>Thứ 2 – Thứ 7: 7:30 – 17:30</div>
+          </div>
+          <div>
+            <div class="font-semibold text-slate-700 mb-1">Thành lập</div>
+            <div class="muted flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4"></i>2019</div>
+          </div>
+        </div>
+        <hr class="divider">
+        <div>
+          <div class="font-semibold text-slate-700 mb-2">Chuyên ngành</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="badge badge-new">Máy đào</span>
+            <span class="badge badge-new">Xe nâng</span>
+            <span class="badge badge-new">Cần cẩu</span>
+            <span class="badge badge-new">Thiết bị nâng hạ</span>
+            <span class="badge badge-new">Nhập khẩu Nhật</span>
+          </div>
+        </div>
+        <hr class="divider">
+        <div>
+          <div class="font-semibold text-slate-700 mb-2">Giấy phép & chứng nhận</div>
+          <div class="flex items-start gap-3 text-sm">
+            <div class="flex items-center gap-2 text-green-700 bg-green-50 rounded-lg px-3 py-2">
+              <i data-lucide="badge-check" class="w-4 h-4"></i> Giấy phép kinh doanh đã xác minh
+            </div>
+            <div class="flex items-center gap-2 text-blue-700 bg-blue-50 rounded-lg px-3 py-2">
+              <i data-lucide="shield-check" class="w-4 h-4"></i> Đã xác minh danh tính
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- sidebar: contact + similar sellers -->
+  <aside class="space-y-4 lg:sticky lg:top-24">
+    <!-- contact card (for visitors) -->
+    <div class="card p-5" id="contact-card">
+      <div class="font-semibold mb-3">Liên hệ nhà cung cấp</div>
+      <div class="space-y-2.5">
+        <a href="tel:0909888999" class="btn btn-accent btn-block"><i data-lucide="phone" class="w-4 h-4"></i> 0909 •••• 88</a>
+        <button class="btn btn-brand btn-block"><i data-lucide="message-circle" class="w-4 h-4"></i> Nhắn tin</button>
+      </div>
+      <div class="flex items-center gap-2 text-sm muted mt-3">
+        <i data-lucide="shield-check" class="w-4 h-4" style="color:#15803d"></i>
+        Thông tin đã được MayXayDung xác minh
+      </div>
+    </div>
+
+    <!-- quick stats -->
+    <div class="card p-5 text-sm space-y-3">
+      <div class="font-semibold text-slate-800 mb-1">Thông tin nhanh</div>
+      <div class="flex justify-between"><span class="muted">Tỷ lệ phản hồi</span><span class="font-semibold text-green-600">97%</span></div>
+      <div class="flex justify-between"><span class="muted">Thời gian phản hồi</span><span class="font-semibold">~1 giờ</span></div>
+      <div class="flex justify-between"><span class="muted">Tin đang đăng</span><span class="font-semibold tabular">128</span></div>
+      <div class="flex justify-between"><span class="muted">Tổng lượt xem</span><span class="font-semibold tabular">240.000</span></div>
+      <div class="flex justify-between"><span class="muted">Thành viên từ</span><span class="font-semibold">2019</span></div>
+    </div>
+
+    <!-- report -->
+    <div class="text-center">
+      <button class="flex items-center gap-2 text-sm muted hover:text-red-600 mx-auto"><i data-lucide="flag" class="w-4 h-4"></i> Báo cáo trang này</button>
+    </div>
+  </aside>
+</div>
+
+<footer class="site-footer py-8 mt-4"><div class="container-wide text-sm" data-i18n="foot.rights">© 2026 MayXayDung. Bản quyền đã được bảo hộ.</div></footer>
+
+<script src="assets/listings-data.js"></script>
+<script>
+  function card(l){
+    return `<a href="product.html" class="listing ${l.boost?'boosted':''}">
+      <div class="listing-media">
+        ${l.boost?'<span class="corner-badge badge badge-boost"><span>Ưu tiên</span></span>':''}
+        <button class="corner-fav" aria-label="Save"><i data-lucide="heart" class="w-4 h-4"></i></button>
+        <img src="${l.img}" alt="${l.title}" loading="lazy" width="600" height="450">
+      </div>
+      <div class="listing-body">
+        <div class="listing-price tabular">${l.price}</div>
+        <div class="listing-title">${l.title}</div>
+        <div class="flex items-center gap-1.5 mt-1">
+          <span class="badge ${l.cond==='new'?'badge-new':'badge-used'}">${l.cond==='new'?'Mới':'Đã qua sử dụng'}</span>
+          ${l.verified?'<span class="badge badge-verified"><i data-lucide="badge-check" class="w-3 h-3"></i></span>':''}
+        </div>
+        <div class="listing-meta"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i>${l.loc}<span class="mx-1">·</span>${l.time}</div>
+      </div>
+    </a>`;
+  }
+
+  // show listings for seller "tan-minh" (profile subject)
+  const sellerListings = LISTINGS.filter(l=>l.seller==='tan-minh');
+  document.getElementById('profile-listings').innerHTML = sellerListings.map(card).join('');
+  lucide.createIcons();
+
+  function switchTab(name, btn){
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+name).classList.add('active');
+    lucide.createIcons();
+  }
+
+  // Toggle own-profile vs visitor view.
+  // In a real app this comes from auth. Here: add ?own=1 to URL to simulate own profile.
+  const isOwnProfile = new URLSearchParams(location.search).get('own') === '1';
+  if(isOwnProfile){
+    document.getElementById('visitor-actions').classList.add('hidden');
+    document.getElementById('own-actions').classList.remove('hidden');
+    document.getElementById('boost-upsell').classList.remove('hidden');
+    document.getElementById('contact-card').classList.add('hidden');
+  }
+
+  if (window.applyLang) applyLang(localStorage.getItem('mxd-lang')||'vi');
+</script>
+<script src="assets/app.js"></script>
+</body>
+</html>

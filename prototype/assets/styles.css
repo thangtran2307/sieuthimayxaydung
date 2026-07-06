@@ -117,6 +117,13 @@ a { color: inherit; text-decoration: none; }
 .listing-title { font-weight:600; color:var(--steel-900); font-size:1rem; line-height:1.35;
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
 .listing-meta { display:flex; align-items:center; gap:.4rem; color:var(--fg-muted); font-size:.82rem; margin-top:auto; }
+/* narrower cards on 2-up mobile grid */
+@media (max-width:639px) {
+  .listing-body { padding:.65rem .7rem .8rem; gap:.25rem; }
+  .listing-price { font-size:1.05rem; }
+  .listing-title { font-size:.9rem; }
+  .listing-meta { font-size:.75rem; }
+}
 .corner-badge { position:absolute; top:.6rem; left:.6rem; z-index:2; }
 .corner-fav { position:absolute; top:.6rem; right:.6rem; z-index:2; background:rgba(255,255,255,.92);
   border:none; width:34px; height:34px; border-radius:999px; display:grid; place-items:center; cursor:pointer;
@@ -171,7 +178,9 @@ a { color: inherit; text-decoration: none; }
 .eyebrow { text-transform:uppercase; letter-spacing:.12em; font-size:.78rem; font-weight:700; color:var(--accent-600); }
 .muted { color:var(--fg-muted); }
 .divider { height:1px; background:var(--border); border:0; }
-.grid-listings { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:20px; }
+/* Mobile-first: 2-up product grid so users see more per screen (marketplace convention) */
+.grid-listings { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+@media (min-width:640px) { .grid-listings { grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:20px; } }
 .stat-tile { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.1rem 1.25rem; }
 .stat-num { font-family:var(--font-display); font-size:1.9rem; font-weight:800; color:var(--steel-900); }
 .tabular { font-variant-numeric: tabular-nums; }
@@ -213,6 +222,13 @@ a { color: inherit; text-decoration: none; }
   color:var(--steel-700); display:flex; align-items:center; gap:.7rem; }
 .mobile-drawer .panel a:hover { color:var(--accent-600); }
 .mobile-drawer .drawer-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:.5rem; }
+
+/* Category subcategory chips on homepage tiles */
+.cat-tile { cursor:default; }
+.cat-tile > a { text-decoration:none; color:inherit; }
+
+/* 2-level category filter subs toggle */
+#cat-filter .hidden { display:none; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }

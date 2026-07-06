@@ -96,13 +96,14 @@
   <!-- ===== RIGHT: seller / contact (sticky) ===== -->
   <aside class="lg:sticky lg:top-24 h-max space-y-4">
     <div class="card p-6">
-      <div class="flex items-center gap-3">
-        <div class="w-14 h-14 rounded-full grid place-items-center text-white font-bold text-lg" style="background:var(--brand)">TM</div>
+      <a href="profile.html" class="flex items-center gap-3 group" style="text-decoration:none">
+        <div class="w-14 h-14 rounded-full grid place-items-center text-white font-bold text-lg shrink-0" style="background:var(--brand)">TM</div>
         <div>
-          <div class="flex items-center gap-1.5"><span class="font-semibold text-slate-900">Tân Minh Machinery</span><i data-lucide="badge-check" class="w-4 h-4" style="color:#15803d"></i></div>
+          <div class="flex items-center gap-1.5"><span class="font-semibold text-slate-900 group-hover:text-blue-700">Tân Minh Machinery</span><i data-lucide="badge-check" class="w-4 h-4" style="color:#15803d"></i></div>
           <div class="text-sm muted"><span data-i18n="lbl.verified">Đã xác minh</span> · 128 tin đăng</div>
         </div>
-      </div>
+        <i data-lucide="chevron-right" class="w-4 h-4 muted ml-auto"></i>
+      </a>
       <div class="flex items-center gap-2 text-sm muted mt-3">
         <i data-lucide="clock" class="w-4 h-4"></i> Thường phản hồi trong 1 giờ
       </div>
@@ -114,6 +115,7 @@
           <button class="btn btn-ghost"><i data-lucide="share-2" class="w-4 h-4"></i> Chia sẻ</button>
         </div>
       </div>
+      <a href="profile.html" class="btn btn-ghost btn-block btn-sm mt-3" style="font-weight:500"><i data-lucide="store" class="w-4 h-4"></i> Xem trang nhà cung cấp</a>
     </div>
     <button class="flex items-center gap-2 text-sm muted hover:text-red-600 mx-auto"><i data-lucide="flag" class="w-4 h-4"></i> <span data-i18n="pp.report">Báo cáo tin này</span></button>
   </aside>
