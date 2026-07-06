@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kết quả tìm kiếm — MayXayDung</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="topbar desktop-only"><div class="container-wide flex items-center justify-between py-1.5">
+    <div class="flex items-center gap-2"><i data-lucide="phone" class="w-3.5 h-3.5"></i><span data-i18n="top.support">Hỗ trợ: 1900 6060</span></div>
+    <div class="flex items-center gap-5"><a href="#" data-i18n="top.help">Trợ giúp</a>
+      <div class="lang-toggle"><button data-lang="vi">VI</button><button data-lang="en">EN</button></div></div>
+  </div></div>
+  <div class="container-wide flex items-center justify-between py-3 gap-4">
+    <a href="index.html" class="brand-mark"><span class="brand-logo"><i data-lucide="hard-hat" class="w-5 h-5"></i></span>MayXayDung</a>
+    <!-- compact search in header -->
+    <form class="searchbar flex-1 max-w-2xl desktop-only" style="box-shadow:var(--shadow-sm)" onsubmit="return false">
+      <div class="field flex-1"><i data-lucide="search" class="w-4 h-4 text-slate-400"></i><input value="Máy đào" aria-label="Keyword"></div>
+      <button class="btn btn-accent" style="border-radius:0 12px 12px 0"><span data-i18n="search.btn">Tìm kiếm</span></button>
+    </form>
+    <div class="flex items-center gap-2.5">
+      <a href="login.html" class="btn btn-ghost desktop-only" data-i18n="nav.login">Đăng nhập</a>
+      <a href="post-listing.html" class="btn btn-accent"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="nav.post">Đăng tin</span></a>
+    </div>
+  </div>
+</header>
+
+<!-- breadcrumb -->
+<div class="container-wide pt-5 text-sm muted flex items-center gap-2">
+  <a href="index.html" class="hover:text-slate-700">MayXayDung</a><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+  <span data-i18n="nav.categories">Danh mục</span><i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+  <span class="text-slate-700 font-medium">Máy đào</span>
+</div>
+
+<div class="container-wide py-6 grid lg:grid-cols-[260px_1fr] gap-6">
+
+  <!-- ===== FILTERS ===== -->
+  <aside class="card p-5 h-max lg:sticky lg:top-24">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg flex items-center gap-2"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i><span data-i18n="sp.filters">Bộ lọc</span></h3>
+      <button class="text-sm text-accent" style="color:var(--accent-600)" data-i18n="sp.clear">Xoá lọc</button>
+    </div>
+
+    <div class="field-group">
+      <span class="label" data-i18n="sp.price">Khoảng giá</span>
+      <div class="flex gap-2"><input class="input" placeholder="Từ" inputmode="numeric"><input class="input" placeholder="Đến" inputmode="numeric"></div>
+    </div>
+
+    <hr class="divider my-4">
+    <div class="field-group">
+      <span class="label" data-i18n="sp.condition">Tình trạng</span>
+      <label class="flex items-center gap-2 mb-1.5 cursor-pointer text-sm"><input type="checkbox" checked> <span data-i18n="lbl.new">Mới</span></label>
+      <label class="flex items-center gap-2 cursor-pointer text-sm"><input type="checkbox" checked> <span data-i18n="lbl.used">Đã qua sử dụng</span></label>
+    </div>
+
+    <hr class="divider my-4">
+    <div class="field-group">
+      <span class="label" data-i18n="sp.brand">Hãng sản xuất</span>
+      <label class="flex items-center gap-2 mb-1.5 cursor-pointer text-sm"><input type="checkbox"> Komatsu</label>
+      <label class="flex items-center gap-2 mb-1.5 cursor-pointer text-sm"><input type="checkbox"> Caterpillar</label>
+      <label class="flex items-center gap-2 mb-1.5 cursor-pointer text-sm"><input type="checkbox"> Hitachi</label>
+      <label class="flex items-center gap-2 cursor-pointer text-sm"><input type="checkbox"> Kobelco</label>
+    </div>
+
+    <hr class="divider my-4">
+    <div class="field-group mb-0">
+      <span class="label" data-i18n="sp.location">Khu vực</span>
+      <select class="select"><option data-i18n="search.loc.all">Toàn quốc</option><option>Hà Nội</option><option>TP.HCM</option><option>Đà Nẵng</option></select>
+    </div>
+    <button class="btn btn-brand btn-block mt-5"><span data-i18n="sp.apply">Áp dụng</span></button>
+  </aside>
+
+  <!-- ===== RESULTS ===== -->
+  <main>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+      <h1 class="text-2xl">Máy đào <span class="muted text-lg font-normal"><span class="tabular">248</span> <span data-i18n="sp.results">kết quả cho</span></span></h1>
+      <label class="flex items-center gap-2 text-sm">
+        <span class="muted" data-i18n="sp.sort">Sắp xếp</span>
+        <select class="select" style="width:auto">
+          <option data-i18n="sp.sort.relevant">Liên quan nhất</option>
+          <option data-i18n="sp.sort.newest">Mới nhất</option>
+          <option data-i18n="sp.sort.price_asc">Giá thấp → cao</option>
+          <option data-i18n="sp.sort.price_desc">Giá cao → thấp</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- sponsored / boosted first -->
+    <div class="flex items-center gap-2 mb-3">
+      <span class="badge badge-boost"><i data-lucide="zap" class="w-3 h-3"></i> <span data-i18n="sp.promoted">Tin tài trợ</span></span>
+    </div>
+    <div class="grid-listings mb-8" id="promoted"></div>
+
+    <hr class="divider mb-8">
+    <div class="grid-listings" id="results"></div>
+
+    <!-- pagination -->
+    <nav class="flex items-center justify-center gap-1.5 mt-10" aria-label="Pagination">
+      <button class="btn btn-ghost btn-sm" aria-label="Previous"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+      <button class="btn btn-brand btn-sm">1</button>
+      <button class="btn btn-ghost btn-sm">2</button>
+      <button class="btn btn-ghost btn-sm">3</button>
+      <span class="px-2 muted">…</span>
+      <button class="btn btn-ghost btn-sm">12</button>
+      <button class="btn btn-ghost btn-sm" aria-label="Next"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+    </nav>
+  </main>
+</div>
+
+<footer class="site-footer py-8 mt-6"><div class="container-wide text-sm" data-i18n="foot.rights">© 2026 MayXayDung. Bản quyền đã được bảo hộ.</div></footer>
+
+<script src="assets/listings-data.js"></script>
+<script>
+  function card(l){
+    return `<a href="product.html" class="listing ${l.boost?'boosted':''}">
+      <div class="listing-media">
+        ${l.boost?'<span class="corner-badge badge badge-boost"><span data-i18n="lbl.boosted">Ưu tiên</span></span>':''}
+        <button class="corner-fav" aria-label="Save"><i data-lucide="heart" class="w-4 h-4"></i></button>
+        <img src="${l.img}" alt="${l.title}" loading="lazy" width="600" height="450">
+      </div>
+      <div class="listing-body">
+        <div class="listing-price tabular">${l.price}</div>
+        <div class="listing-title">${l.title}</div>
+        <div class="flex items-center gap-1.5 mt-1">
+          <span class="badge ${l.cond==='new'?'badge-new':'badge-used'}" data-i18n="${l.cond==='new'?'lbl.new':'lbl.used'}">${l.cond==='new'?'Mới':'Đã qua sử dụng'}</span>
+          ${l.verified?'<span class="badge badge-verified"><i data-lucide="badge-check" class="w-3 h-3"></i></span>':''}
+        </div>
+        <div class="listing-meta"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i>${l.loc}<span class="mx-1">·</span>${l.time}</div>
+      </div>
+    </a>`;
+  }
+  document.getElementById('promoted').innerHTML = LISTINGS.filter(l=>l.boost).map(card).join('');
+  document.getElementById('results').innerHTML  = LISTINGS.filter(l=>!l.boost).concat(LISTINGS).map(card).join('');
+  lucide.createIcons();
+</script>
+<script src="assets/app.js"></script>
+</body>
+</html>

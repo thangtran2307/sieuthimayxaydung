@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MayXayDung — Sàn giao dịch máy xây dựng</title>
+<meta name="description" content="Mua bán máy móc và thiết bị xây dựng từ nhà cung cấp uy tín. Tìm đúng thiết bị, liên hệ trực tiếp người bán.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <!-- top utility bar -->
+  <div class="topbar desktop-only">
+    <div class="container-wide flex items-center justify-between py-1.5">
+      <div class="flex items-center gap-2"><i data-lucide="phone" class="w-3.5 h-3.5"></i><span data-i18n="top.support">Hỗ trợ: 1900 6060</span></div>
+      <div class="flex items-center gap-5">
+        <a href="#" data-i18n="top.help">Trợ giúp</a>
+        <div class="lang-toggle">
+          <button data-lang="vi">VI</button><button data-lang="en">EN</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- main nav -->
+  <div class="container-wide flex items-center justify-between py-3 gap-4">
+    <a href="index.html" class="brand-mark">
+      <span class="brand-logo"><i data-lucide="hard-hat" class="w-5 h-5"></i></span>
+      MayXayDung
+    </a>
+    <nav class="desktop-only flex items-center gap-7 text-[.95rem]">
+      <a href="search.html" class="nav-link active" data-i18n="nav.buy">Mua bán</a>
+      <a href="search.html" class="nav-link" data-i18n="nav.categories">Danh mục</a>
+      <a href="#" class="nav-link" data-i18n="nav.dealers">Nhà cung cấp</a>
+      <a href="#" class="nav-link" data-i18n="nav.pricing">Gói quảng cáo</a>
+    </nav>
+    <div class="flex items-center gap-2.5">
+      <a href="login.html" class="btn btn-ghost desktop-only" data-i18n="nav.login">Đăng nhập</a>
+      <a href="post-listing.html" class="btn btn-accent"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="nav.post">Đăng tin</span></a>
+      <button id="burger" class="mobile-nav btn btn-ghost" aria-label="Menu"><i data-lucide="menu" class="w-5 h-5"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="relative overflow-hidden" style="background:linear-gradient(160deg,#0f172a 0%,#1e3a5f 60%,#25507f 100%);">
+  <div aria-hidden="true" style="position:absolute;inset:0;opacity:.08;background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:44px 44px;"></div>
+  <div class="container-wide relative py-16 md:py-24">
+    <p class="eyebrow" style="color:#fdba74" data-i18n="hero.eyebrow">Sàn giao dịch máy xây dựng #1 Việt Nam</p>
+    <h1 class="text-white mt-3 text-4xl md:text-6xl max-w-3xl" data-i18n="hero.title">Mua bán máy móc & thiết bị xây dựng</h1>
+    <p class="mt-4 max-w-2xl text-[1.05rem]" style="color:#cbd5e1" data-i18n="hero.sub">Hàng chục nghìn tin đăng từ nhà cung cấp uy tín. Tìm đúng thiết bị, liên hệ trực tiếp người bán — không qua trung gian.</p>
+
+    <!-- SEARCH BAR = primary CTA -->
+    <form class="searchbar mt-8 max-w-4xl flex-col md:flex-row" onsubmit="location.href='search.html';return false;">
+      <div class="field flex-[2]">
+        <i data-lucide="search" class="w-5 h-5 text-slate-400"></i>
+        <div class="w-full"><label data-i18n="search.what.label">Từ khoá</label>
+          <input type="text" data-i18n-ph="search.what" placeholder="Bạn cần tìm máy gì?" aria-label="Keyword"></div>
+      </div>
+      <div class="field">
+        <i data-lucide="layout-grid" class="w-5 h-5 text-slate-400"></i>
+        <div class="w-full"><label data-i18n="search.cat.label">Danh mục</label>
+          <select aria-label="Category"><option data-i18n="search.cat.all">Tất cả danh mục</option><option>Máy đào</option><option>Xe nâng</option><option>Cần cẩu</option></select></div>
+      </div>
+      <div class="field">
+        <i data-lucide="map-pin" class="w-5 h-5 text-slate-400"></i>
+        <div class="w-full"><label data-i18n="search.loc.label">Khu vực</label>
+          <select aria-label="Location"><option data-i18n="search.loc.all">Toàn quốc</option><option>Hà Nội</option><option>TP.HCM</option><option>Đà Nẵng</option></select></div>
+      </div>
+      <button class="btn btn-accent btn-lg md:rounded-none" style="border-radius:0 14px 14px 0" type="submit"><i data-lucide="search" class="w-5 h-5"></i><span data-i18n="search.btn">Tìm kiếm</span></button>
+    </form>
+    <div class="mt-4 flex flex-wrap items-center gap-2 text-sm" style="color:#94a3b8">
+      <span data-i18n="search.popular">Tìm nhiều:</span>
+      <a href="search.html" class="px-3 py-1 rounded-full" style="background:rgba(255,255,255,.1);color:#e2e8f0">Máy đào Komatsu</a>
+      <a href="search.html" class="px-3 py-1 rounded-full" style="background:rgba(255,255,255,.1);color:#e2e8f0">Xe nâng 3 tấn</a>
+      <a href="search.html" class="px-3 py-1 rounded-full" style="background:rgba(255,255,255,.1);color:#e2e8f0">Cần cẩu tháp</a>
+    </div>
+
+    <!-- hero stats -->
+    <div class="mt-12 grid grid-cols-3 gap-4 max-w-2xl">
+      <div><div class="stat-num text-white tabular">42,180</div><div class="text-sm" style="color:#94a3b8" data-i18n="hero.stat1">Tin đang đăng</div></div>
+      <div><div class="stat-num text-white tabular">3,600</div><div class="text-sm" style="color:#94a3b8" data-i18n="hero.stat2">Nhà cung cấp</div></div>
+      <div><div class="stat-num text-white tabular">12,900</div><div class="text-sm" style="color:#94a3b8" data-i18n="hero.stat3">Giao dịch/tháng</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATEGORIES ============ -->
+<section class="section">
+  <div class="container-wide">
+    <div class="flex items-end justify-between mb-8">
+      <div><h2 class="text-3xl" data-i18n="cats.title">Danh mục thiết bị</h2><p class="muted mt-1" data-i18n="cats.sub">Chọn nhóm máy bạn quan tâm</p></div>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <a href="search.html" class="cat-tile"><span class="cat-icon"><i data-lucide="truck" class="w-6 h-6"></i></span><span class="font-semibold text-slate-800">Máy đào</span><span class="text-sm muted">2,410 tin</span></a>
+      <a href="search.html" class="cat-tile"><span class="cat-icon"><i data-lucide="forklift" class="w-6 h-6"></i></span><span class="font-semibold text-slate-800">Xe nâng</span><span class="text-sm muted">1,880 tin</span></a>
+      <a href="search.html" class="cat-tile"><span class="cat-icon"><i data-lucide="construction" class="w-6 h-6"></i></span><span class="font-semibold text-slate-800">Cần cẩu</span><span class="text-sm muted">960 tin</span></a>
+      <a href="search.html" class="cat-tile"><span class="cat-icon"><i data-lucide="cog" class="w-6 h-6"></i></span><span class="font-semibold text-slate-800">Máy trộn bê tông</span><span class="text-sm muted">1,120 tin</span></a>
+      <a href="search.html" class="cat-tile"><span class="cat-icon"><i data-lucide="mountain" class="w-6 h-6"></i></span><span class="font-semibold text-slate-800">Máy lu, làm đường</span><span class="text-sm muted">740 tin</span></a>
+      <a href="search.html" class="cat-tile"><span class="cat-icon"><i data-lucide="wrench" class="w-6 h-6"></i></span><span class="font-semibold text-slate-800">Phụ tùng</span><span class="text-sm muted">5,300 tin</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FEATURED (boosted) ============ -->
+<section class="section" style="background:#fff;border-block:1px solid var(--border)">
+  <div class="container-wide">
+    <div class="flex items-end justify-between mb-8">
+      <div><p class="eyebrow"><i data-lucide="zap" class="inline w-4 h-4 -mt-1"></i> <span data-i18n="feat.sub">Tin được ưu tiên hiển thị</span></p><h2 class="text-3xl mt-1" data-i18n="feat.title">Tin nổi bật</h2></div>
+      <a href="search.html" class="btn btn-ghost desktop-only"><span data-i18n="feat.viewall">Xem tất cả</span><i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+    </div>
+    <div class="grid-listings" id="featured"></div>
+  </div>
+</section>
+
+<!-- ============ RECENT ============ -->
+<section class="section">
+  <div class="container-wide">
+    <h2 class="text-3xl mb-8" data-i18n="recent.title">Tin mới đăng</h2>
+    <div class="grid-listings" id="recent"></div>
+  </div>
+</section>
+
+<!-- ============ TRUST ============ -->
+<section class="section" style="background:#fff;border-top:1px solid var(--border)">
+  <div class="container-wide">
+    <h2 class="text-3xl text-center mb-10" data-i18n="trust.title">Vì sao chọn chúng tôi</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="text-center px-4">
+        <div class="mx-auto w-14 h-14 rounded-xl grid place-items-center" style="background:#dcfce7;color:#15803d"><i data-lucide="badge-check" class="w-7 h-7"></i></div>
+        <h3 class="text-xl mt-4" data-i18n="trust.1.t">Người bán được xác minh</h3>
+        <p class="muted mt-2" data-i18n="trust.1.d">Nhà cung cấp xác thực giấy phép kinh doanh trước khi đăng tin.</p>
+      </div>
+      <div class="text-center px-4">
+        <div class="mx-auto w-14 h-14 rounded-xl grid place-items-center" style="background:#fff2e8;color:#c2410c"><i data-lucide="phone-call" class="w-7 h-7"></i></div>
+        <h3 class="text-xl mt-4" data-i18n="trust.2.t">Liên hệ trực tiếp</h3>
+        <p class="muted mt-2" data-i18n="trust.2.d">Gọi hoặc nhắn tin thẳng cho người bán, không mất phí trung gian.</p>
+      </div>
+      <div class="text-center px-4">
+        <div class="mx-auto w-14 h-14 rounded-xl grid place-items-center" style="background:#dbeafe;color:#1d4ed8"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
+        <h3 class="text-xl mt-4" data-i18n="trust.3.t">Kiểm duyệt tin đăng</h3>
+        <p class="muted mt-2" data-i18n="trust.3.d">Đội ngũ quản trị rà soát và gỡ tin vi phạm mỗi ngày.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SELLER CTA ============ -->
+<section class="section">
+  <div class="container-wide">
+    <div class="rounded-2xl overflow-hidden grid md:grid-cols-2 items-center" style="background:linear-gradient(120deg,#1e3a5f,#0f172a)">
+      <div class="p-10 md:p-14">
+        <p class="eyebrow" style="color:#fdba74" data-i18n="seller.eyebrow">Dành cho người bán</p>
+        <h2 class="text-white text-3xl md:text-4xl mt-3" data-i18n="seller.title">Đăng bán thiết bị của bạn tiếp cận hàng nghìn người mua</h2>
+        <p class="mt-4" style="color:#cbd5e1" data-i18n="seller.sub">Tạo tin miễn phí trong 2 phút. Đẩy tin lên đầu kết quả tìm kiếm với gói quảng cáo.</p>
+        <div class="flex flex-wrap gap-3 mt-7">
+          <a href="post-listing.html" class="btn btn-accent btn-lg"><span data-i18n="seller.cta">Đăng tin miễn phí</span></a>
+          <a href="#" class="btn btn-lg" style="background:rgba(255,255,255,.1);color:#fff"><span data-i18n="seller.cta2">Xem gói quảng cáo</span></a>
+        </div>
+      </div>
+      <div class="hidden md:block h-full min-h-[280px]" style="background:url('https://placehold.co/700x500/25507f/ffffff?text=Excavator') center/cover"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer pt-14 pb-8">
+  <div class="container-wide grid md:grid-cols-4 gap-8">
+    <div>
+      <div class="brand-mark" style="color:#fff"><span class="brand-logo"><i data-lucide="hard-hat" class="w-5 h-5"></i></span>MayXayDung</div>
+      <p class="mt-4 text-sm max-w-xs" data-i18n="foot.about">Sàn giao dịch mua bán và cho thuê máy móc, thiết bị xây dựng hàng đầu Việt Nam.</p>
+    </div>
+    <div><div class="footer-title" data-i18n="foot.explore">Khám phá</div><ul class="space-y-2 text-sm"><li><a href="search.html">Máy đào</a></li><li><a href="search.html">Xe nâng</a></li><li><a href="search.html">Cần cẩu</a></li><li><a href="search.html">Phụ tùng</a></li></ul></div>
+    <div><div class="footer-title" data-i18n="foot.forsellers">Người bán</div><ul class="space-y-2 text-sm"><li><a href="post-listing.html" data-i18n="nav.post">Đăng tin</a></li><li><a href="dashboard.html" data-i18n="nav.dashboard">Quản lý tin</a></li><li><a href="#" data-i18n="nav.pricing">Gói quảng cáo</a></li></ul></div>
+    <div><div class="footer-title" data-i18n="foot.support">Hỗ trợ</div><ul class="space-y-2 text-sm"><li><a href="#">1900 6060</a></li><li><a href="#" data-i18n="top.help">Trợ giúp</a></li><li><a href="admin.html">Admin</a></li></ul></div>
+  </div>
+  <div class="container-wide mt-10 pt-6" style="border-top:1px solid rgba(255,255,255,.1)">
+    <p class="text-sm" data-i18n="foot.rights">© 2026 MayXayDung. Bản quyền đã được bảo hộ.</p>
+  </div>
+</footer>
+
+<script src="assets/listings-data.js"></script>
+<script>
+  // render listing cards
+  function card(l){
+    return `<a href="product.html" class="listing ${l.boost?'boosted':''}">
+      <div class="listing-media">
+        ${l.boost?'<span class="corner-badge badge badge-boost"><span data-i18n="lbl.boosted">Ưu tiên</span></span>':''}
+        <button class="corner-fav" aria-label="Save"><i data-lucide="heart" class="w-4 h-4"></i></button>
+        <img src="${l.img}" alt="${l.title}" loading="lazy" width="600" height="450">
+      </div>
+      <div class="listing-body">
+        <div class="listing-price tabular">${l.price}</div>
+        <div class="listing-title">${l.title}</div>
+        <div class="flex items-center gap-1.5 mt-1">
+          <span class="badge ${l.cond==='new'?'badge-new':'badge-used'}" data-i18n="${l.cond==='new'?'lbl.new':'lbl.used'}">${l.cond==='new'?'Mới':'Đã qua sử dụng'}</span>
+          ${l.verified?'<span class="badge badge-verified"><i data-lucide="badge-check" class="w-3 h-3"></i></span>':''}
+        </div>
+        <div class="listing-meta"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i>${l.loc}<span class="mx-1">·</span>${l.time}</div>
+      </div>
+    </a>`;
+  }
+  document.getElementById('featured').innerHTML = LISTINGS.filter(l=>l.boost).slice(0,5).map(card).join('');
+  document.getElementById('recent').innerHTML = LISTINGS.slice(0,10).map(card).join('');
+  lucide.createIcons();
+  // re-apply language to freshly injected nodes
+  if (window.applyLang) applyLang(localStorage.getItem('mxd-lang')||'vi');
+</script>
+<script src="assets/app.js"></script>
+</body>
+</html>

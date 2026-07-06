@@ -1,0 +1,32 @@
+name: Deploy prototype to GitHub Pages
+
+on:
+  push:
+    branches: [ master, main, feature/UI-UX-Design ]
+  workflow_dispatch:   # lets you trigger it manually from the Actions tab
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Upload prototype folder
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./prototype        # publish only the prototype/ folder
+      - id: deployment
+        uses: actions/deploy-pages@v4
