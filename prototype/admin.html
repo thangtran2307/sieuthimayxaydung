@@ -13,10 +13,12 @@
 
 <div class="grid lg:grid-cols-[240px_1fr] min-h-screen">
   <!-- ===== SIDEBAR ===== -->
-  <aside class="hidden lg:flex flex-col" style="background:var(--steel-900);color:var(--steel-300)">
+  <div id="admScrim" class="admin-scrim" onclick="admToggle(false)"></div>
+  <aside id="admSidebar" class="admin-sidebar flex-col" style="background:var(--steel-900);color:var(--steel-300)">
     <div class="p-5 flex items-center gap-2.5" style="border-bottom:1px solid rgba(255,255,255,.08)">
       <span class="brand-logo"><i data-lucide="hard-hat" class="w-5 h-5"></i></span>
       <div><div class="font-bold text-white" style="font-family:var(--font-display)">MayXayDung</div><div class="text-xs" style="color:var(--steel-500)" data-i18n="adm.title">Bảng quản trị</div></div>
+      <button class="lg:hidden ml-auto" aria-label="Close menu" onclick="admToggle(false)" style="border:none;background:transparent;color:var(--steel-400);cursor:pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <nav class="p-3 space-y-1 text-sm flex-1">
       <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white" style="background:rgba(234,88,12,.15);color:#fdba74"><i data-lucide="clock" class="w-4 h-4"></i> <span data-i18n="adm.queue">Hàng chờ duyệt</span> <span class="ml-auto badge badge-pending">14</span></a>
@@ -33,10 +35,10 @@
   </aside>
 
   <!-- ===== MAIN ===== -->
-  <main>
+  <main class="min-w-0">
     <div class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-20">
       <div class="flex items-center gap-3">
-        <button class="lg:hidden btn btn-ghost btn-sm"><i data-lucide="menu" class="w-5 h-5"></i></button>
+        <button class="lg:hidden btn btn-ghost btn-sm" aria-label="Menu" onclick="admToggle(true)"><i data-lucide="menu" class="w-5 h-5"></i></button>
         <h1 class="text-xl" data-i18n="adm.queue">Hàng chờ duyệt</h1>
       </div>
       <div class="flex items-center gap-3">
@@ -66,7 +68,7 @@
           </div>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-sm">
+          <table class="admin-table w-full text-sm">
             <thead><tr class="text-left muted" style="background:var(--steel-50)">
               <th class="p-3 w-8"></th><th class="p-3 font-semibold">Tin đăng</th><th class="p-3 font-semibold">Người bán</th>
               <th class="p-3 font-semibold">Danh mục</th><th class="p-3 font-semibold">Gửi lúc</th><th class="p-3 font-semibold text-right">Thao tác</th>
@@ -99,6 +101,15 @@
     </div></td></tr>`).join('');
   document.getElementById('modrows').innerHTML=rows;
   lucide.createIcons();
+
+  // mobile sidebar toggle
+  function admToggle(open){
+    document.getElementById('admSidebar').classList.toggle('open', open);
+    document.getElementById('admScrim').classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  window.admToggle = admToggle;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') admToggle(false); });
 </script>
 <script src="assets/app.js"></script>
 </body>
