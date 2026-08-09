@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "MayXayDung",
+    "tagline": "Construction machinery marketplace"
+  },
+  "header": {
+    "search": "Search machinery",
+    "postListing": "Post a listing",
+    "login": "Log in",
+    "language": "Language"
+  },
+  "home": {
+    "title": "Buy and sell construction machinery",
+    "subtitle": "Excavators, forklifts, cranes, and parts from trusted sellers across Vietnam.",
+    "status": "Project scaffold ready — foundation (Phase 1 + 2) is in place."
+  }
+}

@@ -1,0 +1,39 @@
+# Local development services for the machinery marketplace.
+# Start with: docker compose up -d
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smxd-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: smxd
+      POSTGRES_PASSWORD: smxd
+      POSTGRES_DB: smxd
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smxd"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # S3-compatible object storage for listing images (dev only).
+  minio:
+    image: minio/minio:latest
+    container_name: smxd-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: smxd
+      MINIO_ROOT_PASSWORD: smxd-secret
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+volumes:
+  pgdata:
+  miniodata:

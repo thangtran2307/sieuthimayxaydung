@@ -1,0 +1,865 @@
+openapi: 3.1.0
+info:
+  title: Construction Machinery Marketplace API
+  version: 0.1.0
+  description: >
+    REST contract for the machinery marketplace MVP (feature 001-machinery-marketplace).
+    Response envelope and conventions are described in contracts/README.md. Shapes mirror the
+    shared @repo/contracts Zod schemas (runtime source of truth).
+servers:
+  - url: /api
+
+tags:
+  - name: Public
+  - name: Auth
+  - name: Seller
+  - name: Admin
+
+paths:
+  /categories:
+    get:
+      tags: [Public]
+      summary: List category taxonomy (categories + subcategories)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Category" }
+
+  /listings:
+    get:
+      tags: [Public]
+      summary: Search / filter / sort listings (ACTIVE only; boosted pinned first)
+      parameters:
+        - { in: query, name: q, schema: { type: string }, description: Full-text query }
+        - { in: query, name: category, schema: { type: string }, description: Category slug }
+        - { in: query, name: subcategory, schema: { type: string }, description: Subcategory slug }
+        - { in: query, name: condition, schema: { $ref: "#/components/schemas/Condition" } }
+        - { in: query, name: province, schema: { type: string } }
+        - { in: query, name: priceMin, schema: { type: integer, format: int64, minimum: 0 } }
+        - { in: query, name: priceMax, schema: { type: integer, format: int64, minimum: 0 } }
+        - in: query
+          name: sort
+          schema: { type: string, enum: [recent, price_asc, price_desc, relevance], default: recent }
+        - { in: query, name: page, schema: { type: integer, minimum: 1, default: 1 } }
+        - { in: query, name: pageSize, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/ListingSummary" }
+                  meta: { $ref: "#/components/schemas/PageMeta" }
+    post:
+      tags: [Seller]
+      summary: Create a listing (enters PENDING moderation)
+      security: [{ cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateListingRequest" }
+      responses:
+        "201":
+          description: Created (status = PENDING)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/Listing" } }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "422": { $ref: "#/components/responses/ValidationFailed" }
+
+  /listings/{slug}:
+    get:
+      tags: [Public]
+      summary: Get a public listing by slug
+      parameters:
+        - { in: path, name: slug, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/Listing" } }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /listings/{id}:
+    patch:
+      tags: [Seller]
+      summary: Update own listing (may return it to PENDING)
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UpdateListingRequest" }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/Listing" } }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationFailed" }
+    delete:
+      tags: [Seller]
+      summary: Delete own listing
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "204": { description: Deleted }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /listings/{id}/mark-sold:
+    post:
+      tags: [Seller]
+      summary: Mark own listing as SOLD
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/Listing" } }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /listings/{id}/inquiries:
+    post:
+      tags: [Public]
+      summary: Contact seller (phone reveal or message); no account required
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateInquiryRequest" }
+      responses:
+        "201":
+          description: Recorded (phone returned only for PHONE_REVEAL)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/InquiryResult" } }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationFailed" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /listings/{id}/reports:
+    post:
+      tags: [Public]
+      summary: Report a listing for admin review
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateReportRequest" }
+      responses:
+        "201": { description: Report recorded }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "429": { $ref: "#/components/responses/RateLimited" }
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a seller account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
+      responses:
+        "201":
+          description: Registered; auth cookies set
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/AuthUser" } }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "422": { $ref: "#/components/responses/ValidationFailed" }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Log in with email/password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginRequest" }
+      responses:
+        "200":
+          description: Authenticated; cookies set
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/AuthUser" } }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Clear session cookies
+      security: [{ cookieAuth: [] }]
+      responses:
+        "204": { description: Logged out }
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Rotate access token using refresh cookie
+      responses:
+        "204": { description: Refreshed }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+
+  /auth/me:
+    get:
+      tags: [Auth]
+      summary: Current authenticated user
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/AuthUser" } }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+
+  /me/listings:
+    get:
+      tags: [Seller]
+      summary: Current seller's listings with status + basic stats
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - { in: query, name: status, schema: { $ref: "#/components/schemas/ListingStatus" } }
+        - { in: query, name: page, schema: { type: integer, minimum: 1, default: 1 } }
+        - { in: query, name: pageSize, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/SellerListingRow" }
+                  meta: { $ref: "#/components/schemas/PageMeta" }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+
+  /me/dashboard:
+    get:
+      tags: [Seller]
+      summary: Seller dashboard KPIs
+      security: [{ cookieAuth: [] }]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/DashboardKpis" } }
+        "401": { $ref: "#/components/responses/Unauthenticated" }
+
+  /boost-packages:
+    get:
+      tags: [Seller]
+      summary: List available boost packages
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/BoostPackage" }
+
+  /listings/{id}/boost-requests:
+    post:
+      tags: [Seller]
+      summary: Request a boost for own ACTIVE listing (v1 manual confirmation)
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CreateBoostRequest" }
+      responses:
+        "201":
+          description: Boost requested (status REQUESTED)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/Boost" } }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "409": { $ref: "#/components/responses/Conflict" }
+        "422": { $ref: "#/components/responses/ValidationFailed" }
+
+  /uploads/presign:
+    post:
+      tags: [Seller]
+      summary: Get a presigned URL for a listing image upload
+      security: [{ cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contentType, sizeBytes]
+              properties:
+                contentType: { type: string, enum: [image/jpeg, image/png, image/webp] }
+                sizeBytes: { type: integer, minimum: 1, maximum: 10485760 }
+      responses:
+        "201":
+          description: Presigned upload
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      uploadUrl: { type: string }
+                      fileUrl: { type: string }
+        "422": { $ref: "#/components/responses/ValidationFailed" }
+
+  /admin/moderation/listings:
+    get:
+      tags: [Admin]
+      summary: Moderation queue
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [pending, active, rejected, removed], default: pending }
+        - { in: query, name: page, schema: { type: integer, minimum: 1, default: 1 } }
+        - { in: query, name: pageSize, schema: { type: integer, minimum: 1, maximum: 50, default: 20 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Listing" }
+                  meta: { $ref: "#/components/schemas/PageMeta" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /admin/moderation/listings/{id}/approve:
+    post:
+      tags: [Admin]
+      summary: Approve a pending listing (→ ACTIVE)
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      responses:
+        "200": { description: Approved }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /admin/moderation/listings/{id}/reject:
+    post:
+      tags: [Admin]
+      summary: Reject a pending listing (→ REJECTED)
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { reason: { type: string } }
+      responses:
+        "200": { description: Rejected }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /admin/moderation/listings/{id}/remove:
+    post:
+      tags: [Admin]
+      summary: Remove a public listing (→ REMOVED)
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { reason: { type: string } }
+      responses:
+        "200": { description: Removed }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /admin/moderation/bulk:
+    post:
+      tags: [Admin]
+      summary: Apply a moderation action to multiple listings
+      security: [{ cookieAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [listingIds, action]
+              properties:
+                listingIds:
+                  type: array
+                  items: { type: string, format: uuid }
+                  minItems: 1
+                action: { $ref: "#/components/schemas/ModerationAction" }
+                reason: { type: string }
+      responses:
+        "200":
+          description: Bulk result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      succeeded: { type: integer }
+                      failed: { type: integer }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /admin/reports:
+    get:
+      tags: [Admin]
+      summary: List reports
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [open, resolved_removed, resolved_cleared], default: open }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Report" }
+                  meta: { $ref: "#/components/schemas/PageMeta" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /admin/reports/{id}/resolve:
+    post:
+      tags: [Admin]
+      summary: Resolve a report (clear or remove listing)
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resolution]
+              properties:
+                resolution: { type: string, enum: [remove, clear] }
+                reason: { type: string }
+      responses:
+        "200": { description: Resolved }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+
+  /admin/boost-requests:
+    get:
+      tags: [Admin]
+      summary: List boost requests awaiting activation
+      security: [{ cookieAuth: [] }]
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [requested, active, expired, cancelled], default: requested }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: "#/components/schemas/Boost" }
+                  meta: { $ref: "#/components/schemas/PageMeta" }
+        "403": { $ref: "#/components/responses/Forbidden" }
+
+  /admin/boost-requests/{id}/activate:
+    post:
+      tags: [Admin]
+      summary: Activate a boost after offline payment (→ ACTIVE)
+      security: [{ cookieAuth: [] }]
+      parameters: [{ in: path, name: id, required: true, schema: { type: string, format: uuid } }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { paymentReference: { type: string } }
+      responses:
+        "200":
+          description: Activated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: { data: { $ref: "#/components/schemas/Boost" } }
+        "403": { $ref: "#/components/responses/Forbidden" }
+        "404": { $ref: "#/components/responses/NotFound" }
+        "422": { $ref: "#/components/responses/ValidationFailed" }
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token
+
+  responses:
+    Unauthenticated:
+      description: Not authenticated
+      content:
+        application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } }
+    Forbidden:
+      description: Not authorized (not owner / not admin)
+      content:
+        application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } }
+    NotFound:
+      description: Resource not found or not public
+      content:
+        application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } }
+    Conflict:
+      description: Conflict
+      content:
+        application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } }
+    ValidationFailed:
+      description: Validation failed
+      content:
+        application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } }
+    RateLimited:
+      description: Too many requests
+      content:
+        application/json: { schema: { $ref: "#/components/schemas/ErrorEnvelope" } }
+
+  schemas:
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            details:
+              nullable: true
+              oneOf:
+                - type: array
+                  items:
+                    type: object
+                    properties:
+                      path: { type: string }
+                      message: { type: string }
+                - type: object
+
+    PageMeta:
+      type: object
+      required: [page, pageSize, total, totalPages]
+      properties:
+        page: { type: integer }
+        pageSize: { type: integer }
+        total: { type: integer }
+        totalPages: { type: integer }
+
+    Condition:
+      type: string
+      enum: [NEW, USED]
+    ListingStatus:
+      type: string
+      enum: [PENDING, ACTIVE, REJECTED, SOLD, EXPIRED, REMOVED]
+    BoostTier:
+      type: string
+      enum: [BASIC, FEATURED, MAX]
+    BoostStatus:
+      type: string
+      enum: [REQUESTED, ACTIVE, EXPIRED, CANCELLED]
+    InquiryType:
+      type: string
+      enum: [PHONE_REVEAL, MESSAGE]
+    ModerationAction:
+      type: string
+      enum: [APPROVED, REJECTED, REMOVED]
+    ReportReason:
+      type: string
+      enum: [FRAUD, INCORRECT_INFO, SPAM, PROHIBITED, OTHER]
+
+    Category:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        parentId: { type: string, format: uuid, nullable: true }
+        labelVi: { type: string }
+        labelEn: { type: string }
+        icon: { type: string, nullable: true }
+        sortOrder: { type: integer }
+
+    ListingPhoto:
+      type: object
+      properties:
+        url: { type: string }
+        sortOrder: { type: integer }
+        width: { type: integer, nullable: true }
+        height: { type: integer, nullable: true }
+
+    ListingSummary:
+      type: object
+      description: Card shape for search/listing rows
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        title: { type: string }
+        priceAmount: { type: integer, format: int64, nullable: true }
+        priceContact: { type: boolean }
+        currency: { type: string }
+        condition: { $ref: "#/components/schemas/Condition" }
+        locationProvince: { type: string }
+        thumbnailUrl: { type: string, nullable: true }
+        boosted: { type: boolean }
+        categorySlug: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    Listing:
+      type: object
+      description: Full public listing detail
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        title: { type: string }
+        condition: { $ref: "#/components/schemas/Condition" }
+        priceAmount: { type: integer, format: int64, nullable: true }
+        priceContact: { type: boolean }
+        currency: { type: string }
+        locationProvince: { type: string }
+        description: { type: string }
+        specs:
+          type: object
+          additionalProperties: true
+        photos:
+          type: array
+          items: { $ref: "#/components/schemas/ListingPhoto" }
+        status: { $ref: "#/components/schemas/ListingStatus" }
+        boosted: { type: boolean }
+        category: { $ref: "#/components/schemas/Category" }
+        subcategory: { $ref: "#/components/schemas/Category", nullable: true }
+        seller: { $ref: "#/components/schemas/PublicSeller" }
+        viewCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+        publishedAt: { type: string, format: date-time, nullable: true }
+
+    PublicSeller:
+      type: object
+      description: Seller info safe for public exposure (no credentials)
+      properties:
+        id: { type: string, format: uuid }
+        displayName: { type: string }
+        locationProvince: { type: string, nullable: true }
+        verified: { type: boolean }
+        joinedAt: { type: string, format: date-time }
+
+    CreateListingRequest:
+      type: object
+      required: [categoryId, title, condition, locationProvince, description, photoUrls]
+      properties:
+        categoryId: { type: string, format: uuid }
+        subcategoryId: { type: string, format: uuid, nullable: true }
+        title: { type: string, minLength: 10, maxLength: 140 }
+        condition: { $ref: "#/components/schemas/Condition" }
+        priceAmount: { type: integer, format: int64, minimum: 0, nullable: true }
+        priceContact: { type: boolean, default: false }
+        locationProvince: { type: string }
+        description: { type: string, minLength: 30 }
+        specs:
+          type: object
+          additionalProperties: true
+        photoUrls:
+          type: array
+          items: { type: string }
+          minItems: 1
+          maxItems: 20
+      description: >
+        Exactly one of priceAmount or priceContact=true must be provided (enforced by the
+        shared Zod schema; violations return 422).
+
+    UpdateListingRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateListingRequest"
+      description: Same shape as create; all fields optional on update.
+
+    CreateInquiryRequest:
+      type: object
+      required: [type]
+      properties:
+        type: { $ref: "#/components/schemas/InquiryType" }
+        buyerName: { type: string }
+        buyerPhone: { type: string }
+        buyerEmail: { type: string, format: email }
+        message: { type: string }
+      description: >
+        For MESSAGE, buyerName and message are required. For PHONE_REVEAL, contact fields optional.
+
+    InquiryResult:
+      type: object
+      properties:
+        type: { $ref: "#/components/schemas/InquiryType" }
+        sellerPhone: { type: string, nullable: true, description: Present only for PHONE_REVEAL }
+
+    CreateReportRequest:
+      type: object
+      required: [reason]
+      properties:
+        reason: { $ref: "#/components/schemas/ReportReason" }
+        details: { type: string }
+        reporterContact: { type: string }
+
+    RegisterRequest:
+      type: object
+      required: [email, password, displayName]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        displayName: { type: string }
+        phone: { type: string }
+        locationProvince: { type: string }
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+
+    AuthUser:
+      type: object
+      description: Current user (never includes passwordHash)
+      properties:
+        id: { type: string, format: uuid }
+        email: { type: string }
+        displayName: { type: string }
+        role: { type: string, enum: [SELLER, ADMIN] }
+        phone: { type: string, nullable: true }
+        locationProvince: { type: string, nullable: true }
+        verified: { type: boolean }
+
+    SellerListingRow:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        slug: { type: string }
+        title: { type: string }
+        status: { $ref: "#/components/schemas/ListingStatus" }
+        priceAmount: { type: integer, format: int64, nullable: true }
+        priceContact: { type: boolean }
+        viewCount: { type: integer }
+        inquiryCount: { type: integer }
+        boosted: { type: boolean }
+        createdAt: { type: string, format: date-time }
+
+    DashboardKpis:
+      type: object
+      properties:
+        totalListings: { type: integer }
+        activeListings: { type: integer }
+        pendingListings: { type: integer }
+        totalViews: { type: integer }
+        totalInquiries: { type: integer }
+        activeBoosts: { type: integer }
+
+    BoostPackage:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        tier: { $ref: "#/components/schemas/BoostTier" }
+        name: { type: string }
+        priorityLevel: { type: integer }
+        durationDays: { type: integer }
+        priceAmount: { type: integer, format: int64 }
+
+    CreateBoostRequest:
+      type: object
+      required: [packageId]
+      properties:
+        packageId: { type: string, format: uuid }
+
+    Boost:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        listingId: { type: string, format: uuid }
+        packageId: { type: string, format: uuid }
+        tier: { $ref: "#/components/schemas/BoostTier" }
+        priorityLevel: { type: integer }
+        status: { $ref: "#/components/schemas/BoostStatus" }
+        requestedAt: { type: string, format: date-time }
+        startsAt: { type: string, format: date-time, nullable: true }
+        expiresAt: { type: string, format: date-time, nullable: true }
+
+    Report:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        listingId: { type: string, format: uuid }
+        reason: { $ref: "#/components/schemas/ReportReason" }
+        details: { type: string, nullable: true }
+        status: { type: string, enum: [OPEN, RESOLVED_REMOVED, RESOLVED_CLEARED] }
+        createdAt: { type: string, format: date-time }

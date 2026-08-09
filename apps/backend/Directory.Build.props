@@ -1,0 +1,19 @@
+<Project>
+  <!-- Shared build settings for all backend projects. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <!-- Nullable reference types disabled by request: reference types are nullable by default,
+         so no `string?` annotations are needed. -->
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- SonarAnalyzer + compiler warnings are surfaced (build output / IDE / SonarQube) but do not
+         break the build. Genuine compiler ERRORS still fail. This keeps Sonar advisory (its normal
+         quality-gate model) and avoids false positives (e.g. S1144 on EF-materialized private
+         setters) blocking the build. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <Deterministic>true</Deterministic>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

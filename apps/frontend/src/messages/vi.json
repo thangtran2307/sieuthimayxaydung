@@ -1,0 +1,17 @@
+{
+  "app": {
+    "name": "MayXayDung",
+    "tagline": "Chợ mua bán máy xây dựng"
+  },
+  "header": {
+    "search": "Tìm kiếm máy móc",
+    "postListing": "Đăng tin",
+    "login": "Đăng nhập",
+    "language": "Ngôn ngữ"
+  },
+  "home": {
+    "title": "Mua bán máy móc xây dựng",
+    "subtitle": "Máy đào, xe nâng, cần cẩu và phụ tùng từ người bán uy tín trên toàn quốc.",
+    "status": "Khung dự án đã sẵn sàng — nền tảng (Giai đoạn 1 + 2) đã hoàn tất."
+  }
+}
