@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý tin — MayXayDung</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container-wide flex items-center justify-between py-3 gap-4">
+    <a href="index.html" class="brand-mark"><span class="brand-logo"><i data-lucide="hard-hat" class="w-5 h-5"></i></span>MayXayDung</a>
+    <div class="flex items-center gap-3">
+      <div class="lang-toggle"><button data-lang="vi">VI</button><button data-lang="en">EN</button></div>
+      <a href="post-listing.html" class="btn btn-accent"><i data-lucide="plus" class="w-4 h-4"></i><span data-i18n="dash.new">Đăng tin mới</span></a>
+      <div class="w-9 h-9 rounded-full grid place-items-center text-white font-bold text-sm" style="background:var(--brand)">TM</div>
+    </div>
+  </div>
+</header>
+
+<div class="container-wide py-8">
+  <h1 class="text-3xl mb-6" data-i18n="dash.title">Quản lý tin đăng</h1>
+
+  <!-- KPI tiles -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="stat-tile"><div class="flex items-center gap-2 text-sm muted"><i data-lucide="megaphone" class="w-4 h-4"></i> <span data-i18n="dash.active">Đang hiển thị</span></div><div class="stat-num tabular mt-1">18</div></div>
+    <div class="stat-tile"><div class="flex items-center gap-2 text-sm muted"><i data-lucide="clock" class="w-4 h-4"></i> <span data-i18n="dash.pending">Chờ duyệt</span></div><div class="stat-num tabular mt-1" style="color:#b45309">3</div></div>
+    <div class="stat-tile"><div class="flex items-center gap-2 text-sm muted"><i data-lucide="eye" class="w-4 h-4"></i> <span data-i18n="dash.views">Lượt xem (30 ngày)</span></div><div class="stat-num tabular mt-1">12,480</div></div>
+    <div class="stat-tile"><div class="flex items-center gap-2 text-sm muted"><i data-lucide="phone-call" class="w-4 h-4"></i> <span data-i18n="dash.leads">Liên hệ nhận được</span></div><div class="stat-num tabular mt-1">342</div></div>
+  </div>
+
+  <!-- listings table -->
+  <div class="card overflow-hidden">
+    <div class="flex items-center justify-between p-4 border-b border-slate-200">
+      <h2 class="text-lg" data-i18n="dash.mylistings">Tin của tôi</h2>
+      <div class="flex gap-2 text-sm">
+        <button class="btn btn-brand btn-sm">Tất cả</button>
+        <button class="btn btn-ghost btn-sm" data-i18n="dash.active">Đang hiển thị</button>
+        <button class="btn btn-ghost btn-sm" data-i18n="dash.pending">Chờ duyệt</button>
+      </div>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" style="border-collapse:collapse">
+        <thead>
+          <tr class="text-left muted" style="background:var(--steel-50)">
+            <th class="p-3 font-semibold">Thiết bị</th>
+            <th class="p-3 font-semibold">Giá</th>
+            <th class="p-3 font-semibold" data-i18n="dash.status">Trạng thái</th>
+            <th class="p-3 font-semibold"><i data-lucide="eye" class="w-4 h-4 inline"></i></th>
+            <th class="p-3 font-semibold text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- boost modal (static preview) -->
+<div class="container-wide mb-12">
+  <div class="card p-6 mt-6" style="background:linear-gradient(120deg,#fffbeb,#fff)">
+    <div class="flex items-start gap-4">
+      <span class="w-12 h-12 rounded-xl grid place-items-center shrink-0" style="background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff"><i data-lucide="rocket" class="w-6 h-6"></i></span>
+      <div class="flex-1">
+        <h3 class="text-xl" data-i18n="dash.boost">Đẩy tin</h3>
+        <p class="muted text-sm mt-1">Đưa tin của bạn lên đầu kết quả tìm kiếm và trang chủ.</p>
+        <div class="grid sm:grid-cols-3 gap-3 mt-4">
+          <label class="border border-slate-200 rounded-lg p-4 cursor-pointer has-[:checked]:border-accent has-[:checked]:bg-orange-50 bg-white">
+            <input type="radio" name="boost" class="float-right"><div class="font-semibold">Cơ bản</div><div class="text-2xl font-bold tabular mt-1" style="font-family:var(--font-display)">99K</div><div class="text-xs muted">7 ngày · lên đầu danh mục</div></label>
+          <label class="border-2 rounded-lg p-4 cursor-pointer bg-white relative" style="border-color:var(--accent)">
+            <span class="badge badge-boost absolute -top-2.5 left-4">Phổ biến</span>
+            <input type="radio" name="boost" class="float-right" checked><div class="font-semibold">Nổi bật</div><div class="text-2xl font-bold tabular mt-1" style="font-family:var(--font-display)">299K</div><div class="text-xs muted">15 ngày · trang chủ + huy hiệu</div></label>
+          <label class="border border-slate-200 rounded-lg p-4 cursor-pointer has-[:checked]:border-accent has-[:checked]:bg-orange-50 bg-white">
+            <input type="radio" name="boost" class="float-right"><div class="font-semibold">Ưu tiên tối đa</div><div class="text-2xl font-bold tabular mt-1" style="font-family:var(--font-display)">699K</div><div class="text-xs muted">30 ngày · vị trí #1</div></label>
+        </div>
+        <button class="btn btn-accent mt-4"><i data-lucide="zap" class="w-4 h-4"></i> Đẩy tin ngay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer py-8"><div class="container-wide text-sm" data-i18n="foot.rights">© 2026 MayXayDung. Bản quyền đã được bảo hộ.</div></footer>
+
+<script src="assets/listings-data.js"></script>
+<script>
+  const statusMap = {live:['badge-live','Đang hiển thị'], pending:['badge-pending','Chờ duyệt'], boosted:['badge-boost','Ưu tiên']};
+  const rows = LISTINGS.slice(0,6).map((l,i)=>{
+    const st = l.boost ? 'boosted' : (i===2||i===5 ? 'pending':'live');
+    const [cls,txt]=statusMap[st];
+    return `<tr class="border-t border-slate-100 hover:bg-slate-50">
+      <td class="p-3"><div class="flex items-center gap-3"><img src="${l.img}" class="w-14 h-11 rounded object-cover"><span class="font-medium text-slate-800 max-w-[220px] truncate">${l.title}</span></div></td>
+      <td class="p-3 tabular font-semibold" style="color:var(--accent-600)">${l.price}</td>
+      <td class="p-3"><span class="badge ${cls}">${txt}</span></td>
+      <td class="p-3 tabular muted">${(1200-i*137).toLocaleString()}</td>
+      <td class="p-3">
+        <div class="flex items-center justify-end gap-1.5">
+          ${st!=='boosted'?'<button class="btn btn-sm" style="background:#fff7ed;color:#c2410c"><i data-lucide="zap" class="w-3.5 h-3.5"></i><span data-i18n="dash.boost">Đẩy tin</span></button>':''}
+          <button class="btn btn-ghost btn-sm"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+          <button class="btn btn-ghost btn-sm" style="color:var(--destructive)"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+        </div>
+      </td></tr>`;
+  }).join('');
+  document.getElementById('rows').innerHTML = rows;
+  lucide.createIcons();
+</script>
+<script src="assets/app.js"></script>
+</body>
+</html>

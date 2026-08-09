@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý danh mục — MayXayDung Admin</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  .cat-row-parent { background:#f8fafc; font-weight:600; }
+  .cat-row-child  { background:#fff; }
+  .cat-row-child td:first-child { padding-left:2.5rem; }
+  .cat-row-child td:first-child::before { content:"└ "; color:var(--steel-400); }
+  .drag-handle { cursor:grab; color:var(--steel-400); }
+  .drag-handle:hover { color:var(--steel-700); }
+  /* modal */
+  .modal-backdrop { position:fixed; inset:0; background:rgba(15,23,42,.5); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; }
+  .modal-box { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow-lg); width:100%; max-width:480px; }
+</style>
+</head>
+<body style="background:var(--steel-100)">
+
+<div class="grid lg:grid-cols-[240px_1fr] min-h-screen">
+
+  <!-- ===== SIDEBAR ===== -->
+  <div id="admScrim" class="admin-scrim" onclick="admToggle(false)"></div>
+  <aside id="admSidebar" class="admin-sidebar flex-col" style="background:var(--steel-900);color:var(--steel-300)">
+    <div class="p-5 flex items-center gap-2.5" style="border-bottom:1px solid rgba(255,255,255,.08)">
+      <span class="brand-logo"><i data-lucide="hard-hat" class="w-5 h-5"></i></span>
+      <div><div class="font-bold text-white" style="font-family:var(--font-display)">MayXayDung</div><div class="text-xs" style="color:var(--steel-500)">Bảng quản trị</div></div>
+      <button class="lg:hidden ml-auto" onclick="admToggle(false)" style="border:none;background:transparent;color:var(--steel-400);cursor:pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <nav class="p-3 space-y-1 text-sm flex-1">
+      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5"><i data-lucide="clock" class="w-4 h-4"></i> Hàng chờ duyệt <span class="ml-auto badge badge-pending">14</span></a>
+      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5"><i data-lucide="flag" class="w-4 h-4"></i> Tin bị báo cáo <span class="ml-auto badge badge-rejected">5</span></a>
+      <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5"><i data-lucide="list" class="w-4 h-4"></i> Tất cả tin đăng</a>
+      <a href="#"          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5"><i data-lucide="users" class="w-4 h-4"></i> Người dùng</a>
+      <a href="#"          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5"><i data-lucide="badge-check" class="w-4 h-4"></i> Xác minh người bán</a>
+      <a href="admin-categories.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-white" style="background:rgba(234,88,12,.15);color:#fdba74"><i data-lucide="layout-grid" class="w-4 h-4"></i> Quản lý danh mục</a>
+      <a href="#"          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5"><i data-lucide="zap" class="w-4 h-4"></i> Quảng cáo & thanh toán</a>
+      <a href="#"          class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5"><i data-lucide="settings" class="w-4 h-4"></i> Cài đặt</a>
+    </nav>
+    <div class="p-3" style="border-top:1px solid rgba(255,255,255,.08)">
+      <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 text-sm"><i data-lucide="log-out" class="w-4 h-4"></i> Thoát</a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <main class="min-w-0">
+    <!-- top bar -->
+    <div class="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between sticky top-0 z-20">
+      <div class="flex items-center gap-3">
+        <button class="lg:hidden btn btn-ghost btn-sm" onclick="admToggle(true)"><i data-lucide="menu" class="w-5 h-5"></i></button>
+        <h1 class="text-xl">Quản lý danh mục</h1>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="lang-toggle"><button data-lang="vi">VI</button><button data-lang="en">EN</button></div>
+        <div class="w-9 h-9 rounded-full grid place-items-center text-white font-bold text-sm" style="background:var(--destructive)">AD</div>
+      </div>
+    </div>
+
+    <div class="p-6">
+      <!-- summary stats -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="stat-tile"><div class="text-sm muted flex items-center gap-2"><i data-lucide="layout-grid" class="w-4 h-4" style="color:var(--brand)"></i>Danh mục cha</div><div class="stat-num tabular mt-1">6</div></div>
+        <div class="stat-tile"><div class="text-sm muted flex items-center gap-2"><i data-lucide="list" class="w-4 h-4" style="color:#15803d"></i>Danh mục con</div><div class="stat-num tabular mt-1">18</div></div>
+        <div class="stat-tile"><div class="text-sm muted flex items-center gap-2"><i data-lucide="megaphone" class="w-4 h-4" style="color:#b45309"></i>Tin đang hoạt động</div><div class="stat-num tabular mt-1">42.180</div></div>
+        <div class="stat-tile"><div class="text-sm muted flex items-center gap-2"><i data-lucide="eye-off" class="w-4 h-4" style="color:var(--steel-400)"></i>Danh mục bị ẩn</div><div class="stat-num tabular mt-1">0</div></div>
+      </div>
+
+      <!-- toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input class="input pl-9" style="width:240px" placeholder="Tìm danh mục…">
+          </div>
+        </div>
+        <button class="btn btn-accent" onclick="openModal()"><i data-lucide="plus" class="w-4 h-4"></i> Thêm danh mục cha</button>
+      </div>
+
+      <!-- category tree table -->
+      <div class="card overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="admin-table w-full text-sm" id="cat-table">
+            <thead><tr class="text-left muted" style="background:var(--steel-50)">
+              <th class="p-3 w-6"></th>
+              <th class="p-3 font-semibold">Tên danh mục</th>
+              <th class="p-3 font-semibold">Slug</th>
+              <th class="p-3 font-semibold text-center">Danh mục con</th>
+              <th class="p-3 font-semibold text-center">Tin đăng</th>
+              <th class="p-3 font-semibold text-center">Trạng thái</th>
+              <th class="p-3 font-semibold text-right">Thao tác</th>
+            </tr></thead>
+            <tbody id="cat-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ===== ADD / EDIT MODAL ===== -->
+<div id="modal" class="modal-backdrop hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <div class="flex items-center justify-between p-5" style="border-bottom:1px solid var(--border)">
+      <h2 class="text-lg font-semibold" id="modal-title">Thêm danh mục</h2>
+      <button onclick="closeModal()" style="border:none;background:transparent;cursor:pointer;color:var(--steel-500)"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="field-group mb-0">
+        <label class="label">Danh mục cha <span class="req">*</span></label>
+        <select class="select" id="m-parent">
+          <option value="">— Đây là danh mục cha (không chọn) —</option>
+        </select>
+      </div>
+      <div class="field-group mb-0">
+        <label class="label">Tên danh mục (VI) <span class="req">*</span></label>
+        <input class="input" id="m-name-vi" placeholder="vd. Máy đào bánh xích">
+      </div>
+      <div class="field-group mb-0">
+        <label class="label">Tên danh mục (EN)</label>
+        <input class="input" id="m-name-en" placeholder="vd. Crawler Excavator">
+      </div>
+      <div class="field-group mb-0">
+        <label class="label">Slug <span class="req">*</span></label>
+        <input class="input" id="m-slug" placeholder="vd. may-dao-banh-xich">
+        <div class="hint">Dùng cho URL. Chỉ chữ thường, số, dấu gạch ngang.</div>
+      </div>
+      <div class="field-group mb-0">
+        <label class="label">Biểu tượng (Lucide icon name)</label>
+        <input class="input" id="m-icon" placeholder="vd. truck">
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer text-sm">
+        <input type="checkbox" id="m-visible" checked> Hiển thị danh mục này trên website
+      </label>
+    </div>
+    <div class="flex justify-end gap-2.5 p-5" style="border-top:1px solid var(--border)">
+      <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
+      <button class="btn btn-brand" onclick="saveCategory()"><i data-lucide="save" class="w-4 h-4"></i> Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- delete confirm -->
+<div id="del-modal" class="modal-backdrop hidden" onclick="if(event.target===this)closeDelModal()">
+  <div class="modal-box" style="max-width:400px">
+    <div class="p-6 text-center">
+      <div class="mx-auto w-14 h-14 rounded-full grid place-items-center mb-4" style="background:#fee2e2"><i data-lucide="trash-2" class="w-7 h-7" style="color:var(--destructive)"></i></div>
+      <h2 class="text-lg font-semibold">Xoá danh mục?</h2>
+      <p class="text-sm muted mt-2" id="del-msg">Danh mục và tất cả danh mục con sẽ bị xoá. Tin đăng thuộc danh mục này sẽ chuyển sang "Chưa phân loại".</p>
+    </div>
+    <div class="flex gap-3 p-5 pt-0">
+      <button class="btn btn-ghost btn-block" onclick="closeDelModal()">Huỷ</button>
+      <button class="btn btn-block" style="background:var(--destructive);color:#fff" onclick="confirmDelete()">Xoá</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/listings-data.js"></script>
+<script>
+  // local mutable copy of categories
+  let cats = JSON.parse(JSON.stringify(CATEGORIES));
+  let editId = null, deleteTarget = null;
+
+  function renderTable(){
+    const rows = [];
+    cats.forEach((c, ci) => {
+      const subCount = c.subs ? c.subs.length : 0;
+      rows.push(`<tr class="cat-row-parent border-t border-slate-200">
+        <td class="p-3"><i data-lucide="grip-vertical" class="w-4 h-4 drag-handle"></i></td>
+        <td class="p-3">
+          <div class="flex items-center gap-2">
+            <span class="w-7 h-7 rounded grid place-items-center" style="background:var(--steel-100);color:var(--brand)"><i data-lucide="${c.icon||'folder'}" class="w-4 h-4"></i></span>
+            <span>${c.label}</span>
+            ${c.labelEn?`<span class="text-xs muted">${c.labelEn}</span>`:''}
+          </div>
+        </td>
+        <td class="p-3 muted text-xs">${c.id}</td>
+        <td class="p-3 text-center"><span class="badge badge-new">${subCount}</span></td>
+        <td class="p-3 text-center tabular">${c.count ? c.count.toLocaleString('vi') : '—'}</td>
+        <td class="p-3 text-center"><span class="badge badge-live">Hiển thị</span></td>
+        <td class="p-3">
+          <div class="flex items-center justify-end gap-1.5">
+            <button class="btn btn-ghost btn-sm" title="Thêm danh mục con" onclick="openModal('${c.id}')"><i data-lucide="plus" class="w-3.5 h-3.5"></i></button>
+            <button class="btn btn-ghost btn-sm" title="Sửa" onclick="openEditModal('${c.id}')"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+            <button class="btn btn-sm" style="background:#fef3c7;color:#b45309" title="Ẩn"><i data-lucide="eye-off" class="w-3.5 h-3.5"></i></button>
+            <button class="btn btn-sm" style="background:#fee2e2;color:#b91c1c" title="Xoá" onclick="openDelModal('${c.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>
+        </td>
+      </tr>`);
+      if(c.subs) c.subs.forEach((s, si) => {
+        rows.push(`<tr class="cat-row-child border-t border-slate-100 hover:bg-slate-50">
+          <td class="p-3"></td>
+          <td class="p-3">
+            <div class="flex items-center gap-2">
+              <span>${s.label}</span>
+              ${s.labelEn?`<span class="text-xs muted">${s.labelEn}</span>`:''}
+            </div>
+          </td>
+          <td class="p-3 muted text-xs">${s.id}</td>
+          <td class="p-3 text-center muted text-xs">—</td>
+          <td class="p-3 text-center tabular">${s.count ? s.count.toLocaleString('vi') : '—'}</td>
+          <td class="p-3 text-center"><span class="badge badge-live">Hiển thị</span></td>
+          <td class="p-3">
+            <div class="flex items-center justify-end gap-1.5">
+              <button class="btn btn-ghost btn-sm" title="Sửa" onclick="openEditModal('${c.id}','${s.id}')"><i data-lucide="pencil" class="w-3.5 h-3.5"></i></button>
+              <button class="btn btn-sm" style="background:#fef3c7;color:#b45309" title="Ẩn"><i data-lucide="eye-off" class="w-3.5 h-3.5"></i></button>
+              <button class="btn btn-sm" style="background:#fee2e2;color:#b91c1c" title="Xoá" onclick="openDelModal('${c.id}','${s.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            </div>
+          </td>
+        </tr>`);
+      });
+    });
+    document.getElementById('cat-tbody').innerHTML = rows.join('');
+    lucide.createIcons();
+  }
+
+  function populateParentSelect(selectedId){
+    const sel = document.getElementById('m-parent');
+    sel.innerHTML = '<option value="">— Đây là danh mục cha (không chọn) —</option>';
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.label;
+      if(c.id === selectedId) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+
+  function openModal(parentId){
+    editId = null;
+    document.getElementById('modal-title').textContent = parentId ? 'Thêm danh mục con' : 'Thêm danh mục cha';
+    document.getElementById('m-name-vi').value = '';
+    document.getElementById('m-name-en').value = '';
+    document.getElementById('m-slug').value = '';
+    document.getElementById('m-icon').value = '';
+    document.getElementById('m-visible').checked = true;
+    populateParentSelect(parentId||'');
+    document.getElementById('modal').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  function openEditModal(parentId, subId){
+    const parent = cats.find(c=>c.id===parentId);
+    if(!parent) return;
+    const item = subId ? parent.subs.find(s=>s.id===subId) : parent;
+    editId = {parentId, subId};
+    document.getElementById('modal-title').textContent = 'Sửa danh mục';
+    document.getElementById('m-name-vi').value = item.label||'';
+    document.getElementById('m-name-en').value = item.labelEn||'';
+    document.getElementById('m-slug').value = item.id||'';
+    document.getElementById('m-icon').value = item.icon||'';
+    document.getElementById('m-visible').checked = true;
+    populateParentSelect(subId ? parentId : '');
+    document.getElementById('modal').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  function closeModal(){ document.getElementById('modal').classList.add('hidden'); }
+
+  function saveCategory(){
+    const nameVi = document.getElementById('m-name-vi').value.trim();
+    const slug   = document.getElementById('m-slug').value.trim();
+    if(!nameVi || !slug){ alert('Vui lòng nhập tên và slug.'); return; }
+    const parentId = document.getElementById('m-parent').value;
+    const item = { id:slug, label:nameVi, labelEn:document.getElementById('m-name-en').value.trim(), icon:document.getElementById('m-icon').value.trim()||'folder', count:0 };
+
+    if(editId){
+      const parent = cats.find(c=>c.id===editId.parentId);
+      if(editId.subId){ const idx = parent.subs.findIndex(s=>s.id===editId.subId); if(idx>-1) parent.subs[idx] = item; }
+      else { const idx = cats.findIndex(c=>c.id===editId.parentId); if(idx>-1) cats[idx] = {...cats[idx],...item}; }
+    } else if(parentId){
+      const parent = cats.find(c=>c.id===parentId);
+      if(parent){ if(!parent.subs) parent.subs=[]; parent.subs.push(item); }
+    } else {
+      cats.push({...item, subs:[]});
+    }
+    closeModal(); renderTable();
+  }
+
+  function openDelModal(parentId, subId){
+    deleteTarget = {parentId, subId};
+    const parent = cats.find(c=>c.id===parentId);
+    const name = subId ? (parent&&parent.subs.find(s=>s.id===subId))||{label:'?'} : parent||{label:'?'};
+    document.getElementById('del-msg').textContent = subId
+      ? `Xoá danh mục con "${name.label}"? Tin đăng thuộc danh mục này sẽ chuyển sang danh mục cha.`
+      : `Xoá danh mục cha "${name.label}" và tất cả ${(parent&&parent.subs&&parent.subs.length)||0} danh mục con? Tin đăng sẽ chuyển sang "Chưa phân loại".`;
+    document.getElementById('del-modal').classList.remove('hidden');
+    lucide.createIcons();
+  }
+  function closeDelModal(){ document.getElementById('del-modal').classList.add('hidden'); }
+  function confirmDelete(){
+    if(!deleteTarget) return;
+    const {parentId, subId} = deleteTarget;
+    if(subId){
+      const parent = cats.find(c=>c.id===parentId);
+      if(parent) parent.subs = parent.subs.filter(s=>s.id!==subId);
+    } else {
+      cats = cats.filter(c=>c.id!==parentId);
+    }
+    closeDelModal(); renderTable();
+  }
+
+  // auto-generate slug from VI name
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('m-name-vi').addEventListener('input', e=>{
+      if(editId) return;
+      document.getElementById('m-slug').value = e.target.value.toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    });
+  });
+
+  // mobile sidebar toggle
+  function admToggle(open){
+    document.getElementById('admSidebar').classList.toggle('open', open);
+    document.getElementById('admScrim').classList.toggle('open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  window.admToggle = admToggle;
+  document.addEventListener('keydown', e => {
+    if(e.key==='Escape'){ admToggle(false); closeModal(); closeDelModal(); }
+  });
+
+  renderTable();
+</script>
+<script src="assets/app.js"></script>
+</body>
+</html>
