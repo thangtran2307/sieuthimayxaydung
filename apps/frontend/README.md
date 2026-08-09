@@ -10,16 +10,21 @@ persisted cookie. Self-contained app — its own `package.json`/`tsconfig` (no m
 
 ```bash
 node --version         # 20+ required
-corepack enable        # provides pnpm
-pnpm --version         # 10.x
+corepack enable        # activates the pnpm version pinned in package.json (packageManager)
+pnpm --version         # should report 10.6.4 (pinned)
 ```
+
+> The exact pnpm version is pinned via the `packageManager` field, so Corepack uses the **same
+> pnpm** on every machine. This avoids lockfile churn and inconsistent build-script prompts.
 
 ## Setup
 
 ```bash
-pnpm install
+pnpm install                   # reproducible install from the committed pnpm-lock.yaml
 cp .env.example .env.local     # then set NEXT_PUBLIC_API_URL if the backend runs elsewhere
 ```
+
+Always commit **both** `package.json` and `pnpm-lock.yaml` together.
 
 `.env.local`:
 
@@ -67,6 +72,24 @@ src/
 ├── contracts/                  # frontend Zod schemas mirroring the API wire contract
 └── messages/                   # vi.json / en.json translation catalogs
 ```
+
+## Troubleshooting
+
+**"Lockfile is not up to date" / `ERR_PNPM_OUTDATED_LOCKFILE`** (e.g. on another machine or CI)
+- Cause: `package.json` changed without regenerating the lock, or you're on a commit where the two
+  are out of sync.
+- Fix: `git pull` the latest commit first. If it persists, run `pnpm install` (updates the lock) and
+  **commit `pnpm-lock.yaml`**. For CI, `pnpm install --frozen-lockfile` must pass — run it locally to
+  verify before pushing.
+
+**pnpm asks to approve build scripts (esbuild / sharp / unrs-resolver)**
+- These native packages run install/build scripts. They are pre-approved via
+  `pnpm.onlyBuiltDependencies` in `package.json`, so a fresh `pnpm install` builds them without
+  prompting — **as long as you're on the latest commit** (older commits didn't have this).
+- If you still get prompted (e.g. different pnpm version), either accept once with
+  `pnpm approve-builds`, or run `pnpm rebuild esbuild sharp unrs-resolver`.
+- Enabling Corepack (`corepack enable`) ensures the pinned pnpm version is used, which keeps this
+  behavior consistent across machines.
 
 ## Notes
 
