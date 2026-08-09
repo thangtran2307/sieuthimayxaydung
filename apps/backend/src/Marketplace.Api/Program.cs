@@ -1,16 +1,19 @@
 using System.Security.Claims;
 using System.Text;
+using Asp.Versioning.ApiExplorer;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using Marketplace.Api.Http;
 using Marketplace.Api.Middleware;
+using Marketplace.Api.Swagger;
 using Marketplace.Api.Validation;
 using Marketplace.Application;
 using Marketplace.Application.Common.Persistence;
 using Marketplace.Infrastructure;
 using Marketplace.Infrastructure.Configuration;
 using Marketplace.Infrastructure.Modules;
+using Marketplace.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -18,11 +21,19 @@ using Serilog.Formatting.Compact;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ── Structured JSON logging (Constitution: structured logging) ──────────────────
-builder.Host.UseSerilog((context, configuration) => configuration
-    .ReadFrom.Configuration(context.Configuration)
-    .Enrich.FromLogContext()
-    .WriteTo.Console(new RenderedCompactJsonFormatter()));
+// ── Logging: human-readable console in Development, structured JSON otherwise ────
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration).Enrich.FromLogContext();
+    if (context.HostingEnvironment.IsDevelopment())
+    {
+        configuration.WriteTo.Console();
+    }
+    else
+    {
+        configuration.WriteTo.Console(new RenderedCompactJsonFormatter());
+    }
+});
 
 // ── Autofac container ───────────────────────────────────────────────────────────
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -44,14 +55,32 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.AddValidatorsFromAssembly(ApplicationAssembly.Reference);
 
-// ── MVC + envelope/validation filters + OpenAPI ─────────────────────────────────
+// ── MVC + envelope/validation filters ───────────────────────────────────────────
 builder.Services.AddControllers(options =>
 {
     options.Conventions.Add(new ApiPrefixConvention());
     options.Filters.Add<FluentValidationFilter>();
     options.Filters.Add<EnvelopeResultFilter>();
 });
-builder.Services.AddOpenApi();
+
+// ── API versioning (url segment: /api/v1/...) ───────────────────────────────────
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
+
+// ── Swagger / OpenAPI (one document per API version) ────────────────────────────
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+// ── Health checks (.NET) ────────────────────────────────────────────────────────
+builder.Services.AddHealthChecks().AddDbContextCheck<MarketplaceDbContext>("database");
 
 // ── Authentication (JWT from httpOnly cookie) + authorization ───────────────────
 var jwt = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? new JwtOptions();
@@ -87,8 +116,9 @@ builder.Services
             },
         };
     });
-builder.Services.AddAuthorization(options =>
-    options.AddPolicy("Admin", policy => policy.RequireRole(nameof(UserRole.ADMIN))));
+builder.Services
+    .AddAuthorizationBuilder()
+    .AddPolicy("Admin", policy => policy.RequireRole(nameof(UserRole.ADMIN)));
 
 // ── CORS for the frontend origin ────────────────────────────────────────────────
 var frontendUrl = builder.Configuration["FrontendUrl"] ?? "http://localhost:3000";
@@ -115,12 +145,27 @@ if (args.Length > 0 && args[0] is "migrate" or "seed")
 }
 
 // ── HTTP pipeline ───────────────────────────────────────────────────────────────
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+        foreach (var description in provider.ApiVersionDescriptions)
+        {
+            options.SwaggerEndpoint(
+                $"/swagger/{description.GroupName}/swagger.json",
+                description.GroupName.ToUpperInvariant());
+        }
+    });
+}
+
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapOpenApi();
+app.MapHealthChecks("/api/health");
 
 await app.RunAsync();

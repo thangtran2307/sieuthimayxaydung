@@ -134,9 +134,10 @@ pagination clamping and the "exactly one of price/priceContact" rule.
 
 ## 7. Cross-stack contract — OpenAPI + openapi-typescript [NEW]
 
-**Decision**: The API emits an OpenAPI document (`Microsoft.AspNetCore.OpenApi`). The frontend
-generates TypeScript types from it using `openapi-typescript`, and keeps hand-written Zod schemas
-(in `packages/contracts`) for runtime validation of critical responses.
+**Decision**: The API exposes OpenAPI via **Swashbuckle** with **Swagger UI** and **URL-segment API
+versioning** (`Asp.Versioning`, e.g. `/api/v1/...`, one Swagger doc per version). The frontend
+generates TypeScript types from `/swagger/v1/swagger.json` using `openapi-typescript`, and keeps
+hand-written Zod schemas (in `apps/frontend/src/contracts`) for runtime validation.
 
 **Rationale**:
 - Recovers most of the anti-drift benefit of the previously-shared contract package across a

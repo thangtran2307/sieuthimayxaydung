@@ -43,10 +43,11 @@ build environment) — see quickstart.md.
 - Backend: ASP.NET Core (Web API); **EF Core + Npgsql.EntityFrameworkCore.PostgreSQL**
   (write side + migrations) + **EFCore.NamingConventions** (snake_case); **Dapper** (read side);
   **Autofac** (IoC) + **AutoMapper** (mapping); **Mediator** (martinothamar, source-generated CQRS);
-  **FluentValidation** (boundary validation); **Serilog** (structured JSON logging);
-  `Microsoft.AspNetCore.Authentication.JwtBearer` (+ optional Google); `Microsoft.AspNetCore.OpenApi`.
-  MediatR was avoided (paid) in favor of the free source-gen mediator; AutoMapper pinned to the last
-  MIT version (13.0.1). See research §2–§6.
+  **FluentValidation** (boundary validation); **Serilog** (readable console in Dev, JSON in Prod);
+  `Microsoft.AspNetCore.Authentication.JwtBearer` (+ optional Google); **Swashbuckle** (Swagger UI) +
+  **Asp.Versioning** (URL-segment API versioning `api/v{version}`); **.NET health checks**
+  (`AddDbContextCheck` at `/api/health`). MediatR avoided (paid) for the free source-gen mediator;
+  AutoMapper pinned to the last MIT version (13.0.1). See research §2–§6.
 - Frontend: Next.js 15 (App Router), React 19, Tailwind CSS, shadcn/ui, next-intl, plus
   `openapi-typescript` for generated API types. Frontend-side Zod schemas/enums (in
   `apps/frontend/src/contracts`) mirror the wire contract for runtime validation.

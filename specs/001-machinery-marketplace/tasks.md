@@ -61,13 +61,13 @@ built; the backend was re-scoped from NestJS to .NET and is pending.
 - [X] T017 [P] Api response envelope — `EnvelopeResultFilter` wrapping `{ data }` / paged `{ data, meta }` in `Marketplace.Api/Http/`
 - [X] T018 [P] Api exception middleware — maps domain/validation/not-found → `{ error: { code, message, details } }`; logs unexpected errors with stack (fail loud)
 - [X] T019 [P] Api validation — `FluentValidationFilter` running registered validators at the boundary (422 + field details)
-- [X] T020 [P] Logging — Serilog compact JSON + request logging (correlation id) wired in `Program.cs`
+- [X] T020 [P] Logging — Serilog (human-readable console in Development, compact JSON in Production) + request logging wired in `Program.cs`
 - [X] T021 Auth infrastructure — JWT issue/validate from the `access_token` httpOnly cookie, ASP.NET `PasswordHasher`, `RolesGuard`/`Admin` policy, cookie helpers
 - [X] T022 [P] Options/config — bind + validate `Jwt`/`Storage` (+ `ConnectionStrings:Postgres`, `FrontendUrl`) with `ValidateOnStart`
-- [X] T023 [P] Host wiring — Autofac service-provider factory + `InfrastructureModule`, source-generated Mediator (`AddMediator`), AutoMapper, `Microsoft.AspNetCore.OpenApi` at `/openapi/v1.json`, `/api` prefix convention, CORS to `FrontendUrl`
-- [X] T024 [P] Seed command — `seed` verb populating categories/subcategories, boost packages, and an admin (Dapper over the DbContext connection)
-- [X] T025 [P] Health endpoint — `GET /api/health` (DB connectivity + a CQRS `PingQuery` proving the mediator/Autofac wiring)
-- [X] T026 [P] Frontend codegen — `openapi-typescript` `gen:api` script wired (generation runs once the backend is up)
+- [X] T023 [P] Host wiring — Autofac service-provider factory + `InfrastructureModule`, source-generated Mediator (`AddApplication`→`AddMediator`, Scoped), AutoMapper, **API versioning** (`api/v{version}` via Asp.Versioning) + **Swagger UI** (Swashbuckle, one doc per version), `/api` prefix convention, CORS to `FrontendUrl`
+- [X] T024 [P] Seed — `seed` verb runs an embedded **SQL script** (`Seed/seed.sql`: categories/subcategories + boost packages) plus the admin in C# (password hashing)
+- [X] T025 [P] Health — **.NET health checks** (`AddDbContextCheck`) mapped at `GET /api/health` (no dedicated controller)
+- [X] T026 [P] Frontend codegen — `openapi-typescript` `gen:api` script wired to `/swagger/v1/swagger.json` (generation runs once the backend is up)
 
 **Checkpoint**: Foundation ready — solution builds (0 errors); user stories can begin.
 

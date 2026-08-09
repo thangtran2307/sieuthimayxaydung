@@ -1,7 +1,7 @@
 import { errorEnvelopeSchema, type ErrorCode } from '@/contracts';
 import type { z } from 'zod';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5127/api';
 
 /** Typed error thrown when the API returns a non-2xx response. */
 export class ApiError extends Error {

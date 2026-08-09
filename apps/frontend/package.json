@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
     "test": "vitest run --passWithNoTests",
-    "gen:api": "openapi-typescript http://localhost:5080/openapi/v1.json -o src/lib/api/schema.d.ts"
+    "gen:api": "openapi-typescript http://localhost:5127/swagger/v1/swagger.json -o src/lib/api/schema.d.ts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
