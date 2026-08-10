@@ -16,11 +16,16 @@ public static class DependencyInjection
     {
         NpgsqlBootstrap.Configure();
 
-        var connectionString = configuration.GetConnectionString("Postgres")
+        // Write connection (EF Core write side + migrations).
+        string writeConnectionString = configuration.GetConnectionString("Postgres")
             ?? throw new InvalidOperationException("ConnectionStrings:Postgres is required.");
 
         services.AddDbContext<MarketplaceDbContext>(options =>
-            options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
+            options.UseNpgsql(writeConnectionString).UseSnakeCaseNamingConvention());
+
+        // Read connection (Dapper read side) — can point at a read replica; falls back to write.
+        string readConnectionString = configuration.GetConnectionString("PostgresRead") ?? writeConnectionString;
+        services.AddSingleton(new ReadDbConnectionFactory(readConnectionString));
 
         return services;
     }

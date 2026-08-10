@@ -12,7 +12,7 @@ public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Mar
     {
         NpgsqlBootstrap.Configure();
 
-        var connectionString =
+        string connectionString =
             Environment.GetEnvironmentVariable("MARKETPLACE_DB")
             ?? "Host=localhost;Port=5432;Database=smxd;Username=smxd;Password=smxd";
 

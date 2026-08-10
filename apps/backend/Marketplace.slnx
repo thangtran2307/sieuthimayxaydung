@@ -6,6 +6,7 @@
     <Project Path="src/Marketplace.Infrastructure/Marketplace.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/Marketplace.Application.Tests/Marketplace.Application.Tests.csproj" />
     <Project Path="tests/Marketplace.Domain.Tests/Marketplace.Domain.Tests.csproj" />
     <Project Path="tests/Marketplace.Integration.Tests/Marketplace.Integration.Tests.csproj" />
   </Folder>

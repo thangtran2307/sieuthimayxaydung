@@ -18,10 +18,10 @@ public sealed class DataSeeder(MarketplaceDbContext dbContext, IPasswordHasher p
     {
         var connection = dbContext.Database.GetDbConnection();
 
-        var script = ReadEmbeddedScript(SeedScriptResource);
+        string script = ReadEmbeddedScript(SeedScriptResource);
         await connection.ExecuteAsync(new CommandDefinition(script, cancellationToken: cancellationToken));
 
-        var adminHash = passwordHasher.Hash("ChangeMe123!");
+        string adminHash = passwordHasher.Hash("ChangeMe123!");
         await connection.ExecuteAsync(new CommandDefinition(
             """
             INSERT INTO users (email, password_hash, role, display_name, verified)

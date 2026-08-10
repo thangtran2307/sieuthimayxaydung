@@ -1,10 +1,12 @@
 using Autofac;
+using Marketplace.Application.Catalog;
 using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Common.Persistence;
 using Marketplace.Infrastructure.Auth;
 using Marketplace.Infrastructure.Common;
 using Marketplace.Infrastructure.Migrations;
 using Marketplace.Infrastructure.Persistence;
+using Marketplace.Infrastructure.Persistence.Queries;
 using Marketplace.Infrastructure.Seed;
 
 namespace Marketplace.Infrastructure.Modules;
@@ -17,11 +19,13 @@ public sealed class InfrastructureModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterGeneric(typeof(EfRepository<>))
-            .As(typeof(IRepository<>))
-            .InstancePerLifetimeScope();
-
+        // Write side: per-aggregate repositories are reached through IUnitOfWork's named properties
+        // (single write entry point), so they are not registered for direct injection.
         builder.RegisterType<EfUnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+
+        // Read side: Dapper query classes on the read connection (CQRS split).
+        builder.RegisterType<CategoryQueries>().As<ICategoryQueries>().InstancePerLifetimeScope();
+        builder.RegisterType<ListingQueries>().As<IListingQueries>().InstancePerLifetimeScope();
         builder.RegisterType<SystemClock>().As<IClock>().SingleInstance();
         builder.RegisterType<PasswordHasherAdapter>().As<IPasswordHasher>().SingleInstance();
         builder.RegisterType<JwtTokenService>().As<IJwtTokenService>().SingleInstance();

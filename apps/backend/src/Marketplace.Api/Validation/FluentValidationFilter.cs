@@ -13,7 +13,7 @@ public sealed class FluentValidationFilter(IServiceProvider serviceProvider) : I
     {
         var errors = new List<ValidationError>();
 
-        foreach (var argument in context.ActionArguments.Values)
+        foreach (object argument in context.ActionArguments.Values)
         {
             if (argument is null)
             {

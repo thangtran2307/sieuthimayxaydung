@@ -45,4 +45,7 @@ public class Listing : Entity
     public DateTime UpdatedAt { get; private set; }
 
     public ICollection<ListingPhoto> Photos { get; private set; } = new List<ListingPhoto>();
+
+    /// <summary>Records a buyer view of this listing (write side; persisted via the unit of work).</summary>
+    public void RegisterView() => ViewCount++;
 }

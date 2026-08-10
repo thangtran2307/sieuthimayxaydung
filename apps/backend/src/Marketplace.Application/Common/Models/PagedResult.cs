@@ -20,7 +20,7 @@ public sealed record PagedResult<T>(IReadOnlyList<T> Items, PageMeta Meta) : IPa
 
     public static PagedResult<T> Create(IReadOnlyList<T> items, int total, int page, int pageSize)
     {
-        var totalPages = pageSize > 0 ? (int)Math.Ceiling(total / (double)pageSize) : 0;
+        int totalPages = pageSize > 0 ? (int)Math.Ceiling(total / (double)pageSize) : 0;
         return new PagedResult<T>(items, new PageMeta(page, pageSize, total, totalPages));
     }
 }

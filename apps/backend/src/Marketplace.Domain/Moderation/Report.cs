@@ -18,4 +18,21 @@ public class Report : Entity
     public DateTime? ResolvedAt { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
+
+    /// <summary>Raises a new flag against a listing (anyone may report; admins resolve later).</summary>
+    public static Report Create(
+        Guid listingId,
+        ReportReason reason,
+        DateTime now,
+        string details = null,
+        string reporterContact = null) => new()
+        {
+            Id = Guid.NewGuid(),
+            ListingId = listingId,
+            Reason = reason,
+            Details = details,
+            ReporterContact = reporterContact,
+            Status = ReportStatus.OPEN,
+            CreatedAt = now,
+        };
 }

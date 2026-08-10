@@ -1,9 +1,12 @@
-using Marketplace.Application.Common.Persistence;
-
 namespace Marketplace.Infrastructure.Persistence;
 
-/// <summary>Generic EF Core write repository (Repository pattern). Commit via <see cref="EfUnitOfWork"/>.</summary>
-public sealed class EfRepository<T>(MarketplaceDbContext dbContext) : IRepository<T>
+/// <summary>
+/// Generic EF Core write repository (Repository pattern) over an aggregate root — load, add,
+/// update, remove. Reached through <see cref="EfUnitOfWork"/>; changes are committed by the unit
+/// of work. A dedicated per-aggregate repository is introduced only when it needs custom write
+/// methods (avoiding empty interface indirection).
+/// </summary>
+internal sealed class EfRepository<T>(MarketplaceDbContext dbContext) : IRepository<T>
     where T : Entity
 {
     public async Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>

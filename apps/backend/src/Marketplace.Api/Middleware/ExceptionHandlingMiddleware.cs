@@ -18,7 +18,7 @@ public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Ex
         }
         catch (AppException ex)
         {
-            var status = MapStatus(ex);
+            int status = MapStatus(ex);
             if (status >= 500)
             {
                 logger.LogError(ex, "Application error: {Code}", ex.Code);

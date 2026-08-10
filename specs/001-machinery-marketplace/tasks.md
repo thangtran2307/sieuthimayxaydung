@@ -93,10 +93,10 @@ a listing, reveal phone / send a message, report a listing; boosted listings pin
 
 ### Implementation for User Story 1
 
-- [ ] T030 [P] [US1] Domain — `Listing`, `Category`, `ListingPhoto`, `Inquiry`, `Report` entities/value objects + boosted-first ranking rule in `Marketplace.Domain/{Catalog,Inquiry,Moderation}/`
-- [ ] T031 [P] [US1] Application — DTOs + `SearchListings`/`GetListingBySlug` queries, `CreateInquiry`, `CreateReport` handlers, validators, and repository ports in `Marketplace.Application/{Catalog,Inquiry,Moderation}/`
-- [ ] T032 [US1] Infrastructure — Dapper `CatalogRepository` (FTS + boosted-first ordering + filters + clamped paging), `InquiryRepository`, `ReportRepository` with SQL in `Marketplace.Infrastructure/Persistence/` (depends on T030, T031)
-- [ ] T033 [US1] Api — `CategoriesController`, `ListingsController` (search + detail, view-count increment), `InquiriesController`, `ReportsController` in `Marketplace.Api/Controllers/` (depends on T032)
+- [X] T030 [P] [US1] Domain — `Listing` (+ `RegisterView` behavior), `Inquiry`/`Report` factory methods; per-aggregate write-repository interfaces (`IListingRepository`/`IInquiryRepository`/`IReportRepository`) + base `IRepository<T>` in `Marketplace.Domain/{Common,Catalog,Inquiry,Moderation}/`
+- [X] T031 [P] [US1] Application — DTOs + `SearchListings`/`GetListingBySlug`/`GetCategories` queries, `CreateInquiry`/`CreateReport` commands, validators, and read-query ports (`ICategoryQueries`/`IListingQueries`) + `IUnitOfWork` (named write repositories) in `Marketplace.Application/{Catalog,Inquiry,Moderation}/`
+- [X] T032 [US1] Infrastructure — **CQRS read/write split**: Dapper query classes (`ListingQueries` FTS + boosted-first + filters + clamped paging via Dapper.SqlBuilder, `CategoryQueries`) on a **separate read connection** (`ReadDbConnectionFactory`, `ConnectionStrings:PostgresRead`); EF per-aggregate write repos + `EfUnitOfWork` on the write connection
+- [X] T033 [US1] Api — `CategoriesController`, `ListingsController` (search + slug detail w/ view increment, inquiries, reports); enum→UPPER_SNAKE JSON in `Marketplace.Api/Controllers/`
 - [ ] T034 [P] [US1] Frontend contracts — category/listing/search/inquiry/report Zod schemas in `packages/contracts/src/` + regenerate OpenAPI types
 - [ ] T035 [P] [US1] Frontend homepage — hero search, category grid, promoted/featured row, recent listings in `apps/frontend/src/app/[locale]/page.tsx`
 - [ ] T036 [P] [US1] Frontend search page — filter sidebar, sort, results grid with promoted badge, pagination in `apps/frontend/src/app/[locale]/search/page.tsx`
@@ -185,7 +185,7 @@ ranks first; after expiry it reverts.
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T062 [P] Backend unit tests (xUnit) — ranking rule, boost lifecycle, price/pagination validation in `apps/backend/tests/Marketplace.Domain.Tests/`
+- [~] T062 [P] Backend unit tests (xUnit) — **US1 done** in `Marketplace.Domain.Tests` (Inquiry/Report factories, `Listing.RegisterView`) + `Marketplace.Application.Tests` (search clamping/sort, inquiry/report handlers + validators, PagedResult) — 31 tests passing, no DB/mocks (hand-written fakes). Remaining: boost lifecycle (US4) ranking rule
 - [ ] T063 [P] Accessibility + responsive pass for all P1 buyer pages in `apps/frontend/`
 - [ ] T064 [P] Security hardening — rate limiting on inquiries/reports/auth, security headers, secret-in-config audit in `Marketplace.Api/`
 - [ ] T065 [P] SEO — per-page metadata, `sitemap.xml`, listing JSON-LD in `apps/frontend/src/app/`

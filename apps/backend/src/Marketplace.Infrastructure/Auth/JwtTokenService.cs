@@ -15,11 +15,11 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options, IClock clock) 
 
     public TokenPair Issue(AuthPrincipal principal)
     {
-        var access = CreateToken(
+        string access = CreateToken(
             principal,
             _options.AccessSecret,
             TimeSpan.FromMinutes(_options.AccessTtlMinutes));
-        var refresh = CreateToken(
+        string refresh = CreateToken(
             principal,
             _options.RefreshSecret,
             TimeSpan.FromDays(_options.RefreshTtlDays));
@@ -45,9 +45,9 @@ public sealed class JwtTokenService(IOptions<JwtOptions> options, IClock clock) 
                 },
                 out _);
 
-            var id = principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
-            var email = principal.FindFirstValue(JwtRegisteredClaimNames.Email) ?? string.Empty;
-            var role = principal.FindFirstValue(ClaimTypes.Role) ?? nameof(UserRole.SELLER);
+            string id = principal.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            string email = principal.FindFirstValue(JwtRegisteredClaimNames.Email) ?? string.Empty;
+            string role = principal.FindFirstValue(ClaimTypes.Role) ?? nameof(UserRole.SELLER);
 
             if (id is null || !Guid.TryParse(id, out var userId))
             {

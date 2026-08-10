@@ -18,4 +18,35 @@ public class Inquiry : Entity
     public string Message { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
+
+    /// <summary>Records that a buyer revealed the seller's phone number (no message).</summary>
+    public static Inquiry PhoneReveal(Guid listingId, Guid sellerId, DateTime now) => new()
+    {
+        Id = Guid.NewGuid(),
+        ListingId = listingId,
+        SellerId = sellerId,
+        Type = InquiryType.PHONE_REVEAL,
+        CreatedAt = now,
+    };
+
+    /// <summary>Records a buyer's message to the seller. Name and message are required.</summary>
+    public static Inquiry SendMessage(
+        Guid listingId,
+        Guid sellerId,
+        string buyerName,
+        string message,
+        DateTime now,
+        string buyerPhone = null,
+        string buyerEmail = null) => new()
+        {
+            Id = Guid.NewGuid(),
+            ListingId = listingId,
+            SellerId = sellerId,
+            Type = InquiryType.MESSAGE,
+            BuyerName = buyerName,
+            Message = message,
+            BuyerPhone = buyerPhone,
+            BuyerEmail = buyerEmail,
+            CreatedAt = now,
+        };
 }

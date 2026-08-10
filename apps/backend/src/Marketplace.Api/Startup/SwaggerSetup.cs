@@ -1,0 +1,22 @@
+using Asp.Versioning.ApiExplorer;
+
+namespace Marketplace.Api.Startup;
+
+/// <summary>Swagger middleware wiring — one UI document per discovered API version.</summary>
+internal static class SwaggerSetup
+{
+    public static void UseVersionedSwaggerUi(this WebApplication app)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+            foreach (string groupName in provider.ApiVersionDescriptions.Select(d => d.GroupName))
+            {
+                options.SwaggerEndpoint(
+                    $"/swagger/{groupName}/swagger.json",
+                    groupName.ToUpperInvariant());
+            }
+        });
+    }
+}
