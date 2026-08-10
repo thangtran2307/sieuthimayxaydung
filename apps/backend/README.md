@@ -110,8 +110,11 @@ dotnet format Marketplace.slnx
 ### Notes
 
 - **Design-time connection**: `dotnet ef migrations add` does **not** touch a database. `database update`
-  does. The design-time factory reads the `MARKETPLACE_DB` env var and otherwise defaults to the local
-  Docker connection string.
+  does. The design-time factory (`Marketplace.Api/Startup/DesignTimeDbContextFactory.cs`) reads the **same
+  configuration as the app** — `appsettings.json`, `appsettings.{ENV}.json`, user-secrets, and environment
+  variables — and uses `ConnectionStrings:Postgres`. To target another database, set it in config or export
+  `ConnectionStrings__Postgres` (e.g. `$env:ConnectionStrings__Postgres="Host=...;Database=...;..."`); it
+  throws if none is configured.
 - **Typical first-run sequence**: `docker compose up -d` → `dotnet run --project src/Marketplace.Api -- seed`
   (migrates + seeds) → `dotnet run --project src/Marketplace.Api`.
 - Migrations live in `src/Marketplace.Infrastructure/Migrations/`. Commit schema-changing migrations
