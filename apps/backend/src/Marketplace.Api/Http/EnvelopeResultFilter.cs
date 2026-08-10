@@ -20,6 +20,11 @@ public sealed class EnvelopeResultFilter : IAsyncResultFilter
             result.Value = result.Value is IPagedResult paged
                 ? new { data = paged.Items, meta = paged.Meta }
                 : new { data = result.Value };
+
+            // The wrapped value's type no longer matches the action's declared return type; clear it
+            // so the output formatter serializes by the (anonymous) runtime type instead of trying to
+            // cast the envelope to the original type (which throws InvalidCastException).
+            result.DeclaredType = null;
         }
 
         await next();
