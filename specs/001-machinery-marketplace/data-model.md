@@ -79,7 +79,7 @@ The core aggregate — a machine/part offered for sale.
 | categoryId | UUID | FK → Category (top-level) |
 | subcategoryId | UUID? | FK → Category (child); optional |
 | title | text | Required, 10–140 chars |
-| slug | text | Unique; generated from title + short id (SEO URLs) |
+| slug | text | Unique; generated from title + short id (SEO URLs). See "Slug convention" below |
 | condition | enum `Condition` | `NEW` \| `USED` |
 | priceAmount | BigInt? | Whole VND; null when `priceContact` = true |
 | priceContact | boolean | True = "Contact for price"; excluded from price-range filter |
@@ -125,6 +125,22 @@ back the P1 filter/sort/search paths (Principle VII).
 - **REMOVED**: admin takedown of a previously public listing (moderation/report outcome).
 
 Only `ACTIVE` listings are eligible for boosted visibility (FR-027) and appear in search (FR-011).
+
+### Slug convention
+
+Slugs are **ASCII-folded from the (Vietnamese) title** — the market is VN-first, so keeping the folded
+Vietnamese words is best for local SEO; titles are NOT translated to English for the slug. Rules:
+
+- Lowercase → strip diacritics → replace non-alphanumeric runs with `-` → collapse/trim `-`.
+- **Replace `đ`/`Đ` explicitly** (`đ→d`). `string.Normalize(FormD)` folds most Vietnamese marks (ơ, ư, ê,
+  …) but NOT `đ` (it is a distinct letter, not base+mark), so it must be special-cased. Example:
+  "Máy xúc đào Komatsu PC200-8" → `may-xuc-dao-komatsu-pc200-8-a1b2c3`.
+- Append a short unique suffix (≈6 chars from the id) for uniqueness on title collisions.
+- **Generated once at creation and kept stable** even if the title is later edited (avoid breaking inbound
+  links/SEO; add a redirect if a change is ever required).
+- No per-locale slugs: a listing has a single title; display language is carried by the `/vi` vs `/en`
+  route prefix. (Category slugs are the exception — curated fixed keys like `excavator`.)
+- Implemented by a `SlugGenerator` in User Story 2 (listing creation).
 
 ---
 
