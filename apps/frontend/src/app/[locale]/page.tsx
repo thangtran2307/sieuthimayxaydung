@@ -1,17 +1,62 @@
+import { Package } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { EmptyState } from '@/components/empty-state';
+import { CategoryGrid } from '@/features/catalog/category-grid';
+import { ListingCard } from '@/features/listings/listing-card';
+import { SearchBar } from '@/features/search/search-bar';
+import { getCategories, searchListings } from '@/lib/api/catalog';
 
-// Foundational placeholder homepage. The full search-first homepage is delivered in
-// User Story 1 (task T032).
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+// Live marketplace data — render per request (never serve build-time-empty static HTML).
+export const dynamic = 'force-dynamic';
+
+/** Search-first homepage: hero search, category grid, and the latest listings (US1). */
+export default async function HomePage({
+  params,
+}: Readonly<{ params: Promise<{ locale: string }> }>) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations('home');
 
+  const [categories, latest] = await Promise.all([
+    getCategories().catch(() => []),
+    searchListings({ sort: 'recent', pageSize: 8 })
+      .then((result) => result.items)
+      .catch(() => []),
+  ]);
+
   return (
-    <section className="mx-auto max-w-2xl space-y-4 text-center">
-      <h1 className="font-display text-4xl font-bold text-brand">{t('title')}</h1>
-      <p className="text-lg text-slate-600">{t('subtitle')}</p>
-      <p className="rounded-md bg-slate-50 p-4 text-sm text-slate-500">{t('status')}</p>
-    </section>
+    <div className="space-y-12">
+      <section className="rounded-xl bg-brand px-6 py-12 text-center text-brand-fg">
+        <h1 className="font-display text-3xl font-bold sm:text-4xl">{t('heroTitle')}</h1>
+        <p className="mx-auto mt-3 max-w-2xl text-brand-fg/80">{t('heroSubtitle')}</p>
+        <div className="mx-auto mt-6 max-w-2xl">
+          <SearchBar />
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-display text-xl font-semibold text-slate-900">
+          {t('browseCategories')}
+        </h2>
+        <CategoryGrid categories={categories} />
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="font-display text-xl font-semibold text-slate-900">{t('latest')}</h2>
+        {latest.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {latest.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState
+            icon={<Package className="h-10 w-10" aria-hidden />}
+            title={t('noListings')}
+            description={t('noListingsHint')}
+          />
+        )}
+      </section>
+    </div>
   );
 }

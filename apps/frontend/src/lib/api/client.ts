@@ -17,28 +17,18 @@ export class ApiError extends Error {
 }
 
 /**
- * Fetches from the backend and validates the response against a shared contract schema
- * (Zod schemas in src/contracts mirror the backend OpenAPI). During SSR, forwards the cookies so the
- * authenticated session is preserved.
+ * Fetches from the backend and validates the response against a shared contract schema (the Zod
+ * schemas in `src/contracts` mirror the backend OpenAPI). Isomorphic: works in Server Components and
+ * in the browser. Cookies are sent automatically in the browser via `credentials: 'include'`; for
+ * authenticated server rendering, pass the cookie header through `init.headers`.
  */
 export async function apiFetch<T>(
   path: string,
   schema: z.ZodType<T>,
   init?: RequestInit,
 ): Promise<T> {
-  const headers = new Headers(init?.headers);
-
-  if (typeof window === 'undefined') {
-    const { cookies } = await import('next/headers');
-    const cookieHeader = (await cookies()).toString();
-    if (cookieHeader) {
-      headers.set('cookie', cookieHeader);
-    }
-  }
-
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
-    headers,
     credentials: 'include',
     cache: 'no-store',
   });

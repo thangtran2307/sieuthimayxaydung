@@ -97,11 +97,11 @@ a listing, reveal phone / send a message, report a listing; boosted listings pin
 - [X] T031 [P] [US1] Application — DTOs + `SearchListings`/`GetListingBySlug`/`GetCategories` queries, `CreateInquiry`/`CreateReport` commands, validators, and read-query ports (`ICategoryQueries`/`IListingQueries`) + `IUnitOfWork` (named write repositories) in `Marketplace.Application/{Catalog,Inquiry,Moderation}/`
 - [X] T032 [US1] Infrastructure — **CQRS read/write split**: Dapper query classes (`ListingQueries` FTS + boosted-first + filters + clamped paging via Dapper.SqlBuilder, `CategoryQueries`) on a **separate read connection** (`ReadDbConnectionFactory`, `ConnectionStrings:PostgresRead`); EF per-aggregate write repos + `EfUnitOfWork` on the write connection
 - [X] T033 [US1] Api — `CategoriesController`, `ListingsController` (search + slug detail w/ view increment, inquiries, reports); enum→UPPER_SNAKE JSON in `Marketplace.Api/Controllers/`
-- [ ] T034 [P] [US1] Frontend contracts — category/listing/search/inquiry/report Zod schemas in `packages/contracts/src/` + regenerate OpenAPI types
-- [ ] T035 [P] [US1] Frontend homepage — hero search, category grid, promoted/featured row, recent listings in `apps/frontend/src/app/[locale]/page.tsx`
-- [ ] T036 [P] [US1] Frontend search page — filter sidebar, sort, results grid with promoted badge, pagination in `apps/frontend/src/app/[locale]/search/page.tsx`
-- [ ] T037 [US1] Frontend listing detail — gallery, specs, seller card, contact (phone reveal + message form), report in `apps/frontend/src/app/[locale]/listing/[slug]/page.tsx`
-- [ ] T038 [US1] Frontend empty-state + "no longer available" state + US1 i18n strings
+- [X] T034 [P] [US1] Frontend contracts — category/listing/search/inquiry/report Zod schemas in `apps/frontend/src/contracts/` + typed API layer (`lib/api/{catalog,inquiries,reports}.ts`); `apiFetch` made isomorphic (no `next/headers`)
+- [X] T035 [P] [US1] Frontend homepage — hero search, category grid, latest listings (boosted-first) in `apps/frontend/src/app/[locale]/page.tsx` (force-dynamic, server-rendered)
+- [X] T036 [P] [US1] Frontend search page — filter sidebar (category/condition/province/price/sort), results grid with featured badge, pagination in `apps/frontend/src/app/[locale]/search/page.tsx`
+- [X] T037 [US1] Frontend listing detail — gallery, specs, seller card, contact (phone reveal + message form), report in `apps/frontend/src/app/[locale]/listing/[slug]/page.tsx` (+ `generateMetadata`, request-cached fetch)
+- [X] T038 [US1] Frontend empty-state + "no longer available" (404→friendly state) + full VI/EN i18n strings
 
 **Checkpoint**: US1 fully functional — searchable catalog connecting buyers to sellers (MVP).
 
