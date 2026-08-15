@@ -77,6 +77,11 @@
     "send": "Gửi tin nhắn",
     "error": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
+  "error": {
+    "title": "Đã xảy ra lỗi",
+    "description": "Đã có lỗi không mong muốn. Vui lòng thử lại.",
+    "retry": "Thử lại"
+  },
   "report": {
     "report": "Báo cáo tin đăng",
     "reportListing": "Báo cáo tin đăng",

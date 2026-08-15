@@ -12,12 +12,15 @@ import { ReportListing } from '@/features/report/report-listing';
 import { Link } from '@/i18n/navigation';
 import { getListingBySlug } from '@/lib/api/catalog';
 import { formatDate, formatPrice } from '@/lib/format';
+import { logger } from '@/lib/logger';
 
 /** Request-scoped cache so metadata + the page share one fetch (one view increment). */
 const loadListing = cache(async (slug: string): Promise<ListingDetail | null> => {
   try {
     return await getListingBySlug(slug);
-  } catch {
+  } catch (error) {
+    // getListingBySlug returns null for a 404 (expected); reaching here means a real failure.
+    logger.error('Failed to load listing detail', error, { slug });
     return null;
   }
 });

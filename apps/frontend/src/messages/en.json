@@ -77,6 +77,11 @@
     "send": "Send message",
     "error": "Something went wrong. Please try again."
   },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "retry": "Try again"
+  },
   "report": {
     "report": "Report this listing",
     "reportListing": "Report this listing",

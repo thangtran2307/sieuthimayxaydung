@@ -45,7 +45,7 @@ export async function apiFetch<T>(
         parsed.data.error.details,
       );
     }
-    throw new ApiError('INTERNAL_ERROR', `Request to ${path} failed`, res.status);
+    throw new ApiError('INTERNAL_ERROR', `Request to ${path} failed`, res.status, json);
   }
 
   return schema.parse(json);

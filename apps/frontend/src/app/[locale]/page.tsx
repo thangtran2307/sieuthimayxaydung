@@ -5,6 +5,7 @@ import { CategoryGrid } from '@/features/catalog/category-grid';
 import { ListingCard } from '@/features/listings/listing-card';
 import { SearchBar } from '@/features/search/search-bar';
 import { getCategories, searchListings } from '@/lib/api/catalog';
+import { logger } from '@/lib/logger';
 
 // Live marketplace data — render per request (never serve build-time-empty static HTML).
 export const dynamic = 'force-dynamic';
@@ -18,10 +19,16 @@ export default async function HomePage({
   const t = await getTranslations('home');
 
   const [categories, latest] = await Promise.all([
-    getCategories().catch(() => []),
+    getCategories().catch((error) => {
+      logger.error('Homepage: failed to load categories', error);
+      return [];
+    }),
     searchListings({ sort: 'recent', pageSize: 8 })
       .then((result) => result.items)
-      .catch(() => []),
+      .catch((error) => {
+        logger.error('Homepage: failed to load latest listings', error);
+        return [];
+      }),
   ]);
 
   return (

@@ -6,6 +6,7 @@ import { ListingGrid } from '@/features/listings/listing-grid';
 import { Pagination } from '@/features/search/pagination';
 import { SearchFilters } from '@/features/search/search-filters';
 import { getCategories, searchListings } from '@/lib/api/catalog';
+import { logger } from '@/lib/logger';
 
 const PAGE_SIZE = 20;
 
@@ -27,8 +28,14 @@ export default async function SearchPage({
   const parsed = searchParamsSchema.parse(await searchParams);
 
   const [categories, result] = await Promise.all([
-    getCategories().catch(() => []),
-    searchListings({ ...parsed, pageSize: PAGE_SIZE }).catch(() => null),
+    getCategories().catch((error) => {
+      logger.error('Search: failed to load categories', error);
+      return [];
+    }),
+    searchListings({ ...parsed, pageSize: PAGE_SIZE }).catch((error) => {
+      logger.error('Search: listing query failed', error, { params: parsed });
+      return null;
+    }),
   ]);
 
   return (
