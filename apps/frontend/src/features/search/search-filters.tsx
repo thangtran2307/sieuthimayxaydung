@@ -1,12 +1,13 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { type FormEvent } from 'react';
+import { type SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import type { Category, SearchParams } from '@/contracts';
 import { useRouter } from '@/i18n/navigation';
+import { formString } from '@/lib/utils';
 
 const FIELDS = ['q', 'category', 'condition', 'province', 'priceMin', 'priceMax', 'sort'] as const;
 
@@ -23,12 +24,12 @@ export function SearchFilters({
   const router = useRouter();
   const topLevel = categories.filter((category) => category.parentId === null);
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const query = new URLSearchParams();
     for (const field of FIELDS) {
-      const value = String(form.get(field) ?? '').trim();
+      const value = formString(form, field).trim();
       if (value) {
         query.set(field, value);
       }

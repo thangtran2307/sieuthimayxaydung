@@ -2,7 +2,7 @@
 
 import { Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
+import { useState, type SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useRouter } from '@/i18n/navigation';
@@ -13,7 +13,7 @@ export function SearchBar({ initialQuery = '' }: Readonly<{ initialQuery?: strin
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
     const trimmed = query.trim();
     router.push(trimmed ? `/search?q=${encodeURIComponent(trimmed)}` : '/search');

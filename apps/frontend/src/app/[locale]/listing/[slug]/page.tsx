@@ -1,6 +1,6 @@
 import { BadgeCheck, Eye, MapPin } from 'lucide-react';
 import type { Metadata } from 'next';
-import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { cache } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
@@ -50,8 +50,7 @@ export default async function ListingDetailPage({
 }: Readonly<{
   params: Promise<{ locale: string; slug: string }>;
 }>) {
-  const { locale, slug } = await params;
-  setRequestLocale(locale);
+  const { slug } = await params;
   const t = await getTranslations('listing');
   const listing = await loadListing(slug);
 
@@ -106,7 +105,7 @@ export default async function ListingDetailPage({
                   className="flex justify-between border-b border-slate-100 py-1.5 text-sm"
                 >
                   <dt className="text-slate-500">{humanize(key)}</dt>
-                  <dd className="font-medium text-slate-800">{String(value)}</dd>
+                  <dd className="font-medium text-slate-800">{formatSpecValue(value)}</dd>
                 </div>
               ))}
             </dl>
@@ -166,4 +165,12 @@ export default async function ListingDetailPage({
 function humanize(key: string): string {
   const spaced = key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[_-]+/g, ' ');
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+/** Renders a spec value safely — specs are primitives, but guard against unexpected objects. */
+function formatSpecValue(value: unknown): string {
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return JSON.stringify(value);
 }

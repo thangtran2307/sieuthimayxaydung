@@ -1,5 +1,6 @@
 import { Cog, Construction, Mountain, Package, Truck, Wrench, type LucideIcon } from 'lucide-react';
 import { useLocale } from 'next-intl';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { Category } from '@/contracts';
 import { Link } from '@/i18n/navigation';
 
@@ -34,6 +35,17 @@ export function CategoryGrid({ categories }: Readonly<{ categories: Category[] }
           </Link>
         );
       })}
+    </div>
+  );
+}
+
+/** Placeholder shown while the category taxonomy loads. */
+export function CategoryGridSkeleton() {
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+      {Array.from({ length: 6 }, (_, index) => `category-skeleton-${index}`).map((key) => (
+        <Skeleton key={key} className="h-24 rounded-lg" />
+      ))}
     </div>
   );
 }

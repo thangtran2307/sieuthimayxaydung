@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, setRequestLocale } from 'next-intl/server';
+import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import { Header } from '@/components/header';
@@ -11,10 +11,6 @@ export const metadata: Metadata = {
   title: 'MayXayDung — Construction Machinery Marketplace',
   description: 'Buy and sell construction machinery, parts, and equipment in Vietnam.',
 };
-
-export function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
-}
 
 export default async function LocaleLayout({
   children,
@@ -27,7 +23,6 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(locale as AppLocale)) {
     notFound();
   }
-  setRequestLocale(locale);
   const messages = await getMessages();
 
   return (

@@ -2,11 +2,12 @@
 
 import { Check, Loader2, MessageSquare, Phone } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type FormEvent, type ReactNode } from 'react';
+import { useState, type ReactNode, type SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { createInquiry } from '@/lib/api/inquiries';
+import { formString } from '@/lib/utils';
 
 /** Contact panel: reveal the seller's phone or send a message. No account required (FR-008). */
 export function ContactSeller({ listingId }: Readonly<{ listingId: string }>) {
@@ -30,7 +31,7 @@ export function ContactSeller({ listingId }: Readonly<{ listingId: string }>) {
     }
   };
 
-  const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
+  const sendMessage = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     setSending(true);
@@ -38,10 +39,10 @@ export function ContactSeller({ listingId }: Readonly<{ listingId: string }>) {
     try {
       await createInquiry(listingId, {
         type: 'MESSAGE',
-        buyerName: String(form.get('buyerName') ?? ''),
-        buyerPhone: String(form.get('buyerPhone') ?? '') || undefined,
-        buyerEmail: String(form.get('buyerEmail') ?? '') || undefined,
-        message: String(form.get('message') ?? ''),
+        buyerName: formString(form, 'buyerName'),
+        buyerPhone: formString(form, 'buyerPhone') || undefined,
+        buyerEmail: formString(form, 'buyerEmail') || undefined,
+        message: formString(form, 'message'),
       });
       setSent(true);
     } catch {

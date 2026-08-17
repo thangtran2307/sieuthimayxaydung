@@ -5,8 +5,6 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Lint is run as a separate pipeline step (`next lint`), not during the build.
-  eslint: { ignoreDuringBuilds: true },
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },

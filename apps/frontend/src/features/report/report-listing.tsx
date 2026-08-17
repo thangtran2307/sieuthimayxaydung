@@ -2,12 +2,13 @@
 
 import { Check, Flag, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
+import { useState, type SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { ReportReason } from '@/contracts';
 import { createReport } from '@/lib/api/reports';
+import { formString } from '@/lib/utils';
 
 const REASONS: ReportReason[] = ['FRAUD', 'INCORRECT_INFO', 'SPAM', 'PROHIBITED', 'OTHER'];
 
@@ -19,7 +20,7 @@ export function ReportListing({ listingId }: Readonly<{ listingId: string }>) {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const submit = async (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     setSubmitting(true);
@@ -27,7 +28,7 @@ export function ReportListing({ listingId }: Readonly<{ listingId: string }>) {
     try {
       await createReport(listingId, {
         reason: form.get('reason') as ReportReason,
-        details: String(form.get('details') ?? '') || undefined,
+        details: formString(form, 'details') || undefined,
       });
       setDone(true);
     } catch {

@@ -29,7 +29,8 @@ function serializeError(error: unknown): Record<string, unknown> | undefined {
 }
 
 function emit(level: Level, message: string, fields?: Fields): void {
-  const consoleFn = level === 'error' ? console.error : level === 'warn' ? console.warn : console.info;
+  const consoleFn =
+    level === 'error' ? console.error : level === 'warn' ? console.warn : console.info;
 
   if (isProduction) {
     consoleFn(JSON.stringify({ time: new Date().toISOString(), level, message, ...fields }));
