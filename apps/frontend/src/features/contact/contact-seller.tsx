@@ -2,60 +2,58 @@
 
 import { Check, Loader2, MessageSquare, Phone } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type ReactNode, type SyntheticEvent } from 'react';
+import { useState, useTransition, type ReactNode, type SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { createInquiry } from '@/lib/api/inquiries';
+import { createInquiry } from '@/actions/inquiry';
 import { formString } from '@/lib/utils';
 
 /** Contact panel: reveal the seller's phone or send a message. No account required (FR-008). */
 export function ContactSeller({ listingId }: Readonly<{ listingId: string }>) {
   const t = useTranslations('contact');
   const [phone, setPhone] = useState<string | null>(null);
-  const [revealing, setRevealing] = useState(false);
-  const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [revealing, startReveal] = useTransition();
+  const [sending, startSend] = useTransition();
 
-  const revealPhone = async () => {
-    setRevealing(true);
-    setError(null);
-    try {
-      const result = await createInquiry(listingId, { type: 'PHONE_REVEAL' });
-      setPhone(result.sellerPhone ?? '');
-    } catch {
-      setError(t('error'));
-    } finally {
-      setRevealing(false);
-    }
+  const revealPhone = () => {
+    startReveal(async () => {
+      setError(null);
+      try {
+        const result = await createInquiry(listingId, { type: 'PHONE_REVEAL' });
+        setPhone(result.sellerPhone ?? '');
+      } catch {
+        setError(t('error'));
+      }
+    });
   };
 
-  const sendMessage = async (event: SyntheticEvent<HTMLFormElement>) => {
+  const sendMessage = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    setSending(true);
-    setError(null);
-    try {
-      await createInquiry(listingId, {
-        type: 'MESSAGE',
-        buyerName: formString(form, 'buyerName'),
-        buyerPhone: formString(form, 'buyerPhone') || undefined,
-        buyerEmail: formString(form, 'buyerEmail') || undefined,
-        message: formString(form, 'message'),
-      });
-      setSent(true);
-    } catch {
-      setError(t('error'));
-    } finally {
-      setSending(false);
-    }
+    startSend(async () => {
+      setError(null);
+      try {
+        await createInquiry(listingId, {
+          type: 'MESSAGE',
+          buyerName: formString(form, 'buyerName'),
+          buyerPhone: formString(form, 'buyerPhone') || undefined,
+          buyerEmail: formString(form, 'buyerEmail') || undefined,
+          message: formString(form, 'message'),
+        });
+        setSent(true);
+      } catch {
+        setError(t('error'));
+      }
+    });
   };
 
   let phoneAction: ReactNode;
   if (phone === null) {
     phoneAction = (
-      <Button className="w-full" onClick={() => void revealPhone()} disabled={revealing}>
+      <Button className="w-full" onClick={revealPhone} disabled={revealing}>
         {revealing ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
         ) : (

@@ -2,12 +2,12 @@
 
 import { Check, Flag, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState, type SyntheticEvent } from 'react';
+import { useState, useTransition, type SyntheticEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import type { ReportReason } from '@/contracts';
-import { createReport } from '@/lib/api/reports';
+import { createReport } from '@/actions/report';
 import { formString } from '@/lib/utils';
 
 const REASONS: ReportReason[] = ['FRAUD', 'INCORRECT_INFO', 'SPAM', 'PROHIBITED', 'OTHER'];
@@ -16,26 +16,25 @@ const REASONS: ReportReason[] = ['FRAUD', 'INCORRECT_INFO', 'SPAM', 'PROHIBITED'
 export function ReportListing({ listingId }: Readonly<{ listingId: string }>) {
   const t = useTranslations('report');
   const [open, setOpen] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, startSubmit] = useTransition();
 
-  const submit = async (event: SyntheticEvent<HTMLFormElement>) => {
+  const submit = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    setSubmitting(true);
-    setError(null);
-    try {
-      await createReport(listingId, {
-        reason: form.get('reason') as ReportReason,
-        details: formString(form, 'details') || undefined,
-      });
-      setDone(true);
-    } catch {
-      setError(t('error'));
-    } finally {
-      setSubmitting(false);
-    }
+    startSubmit(async () => {
+      setError(null);
+      try {
+        await createReport(listingId, {
+          reason: form.get('reason') as ReportReason,
+          details: formString(form, 'details') || undefined,
+        });
+        setDone(true);
+      } catch {
+        setError(t('error'));
+      }
+    });
   };
 
   if (done) {

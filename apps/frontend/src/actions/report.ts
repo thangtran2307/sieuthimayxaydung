@@ -1,8 +1,10 @@
+'use server';
+
 import { z } from 'zod';
 import type { CreateReport } from '@/contracts';
-import { apiFetch } from './client';
+import { apiFetch } from '@/lib/api/client';
 
-/** Reports a listing for admin review (201 No Content). No account required. */
+/** Flags a listing for admin review. Runs on the Next.js server. */
 export async function createReport(listingId: string, body: CreateReport): Promise<void> {
   await apiFetch(`/v1/listings/${listingId}/reports`, z.unknown(), {
     method: 'POST',

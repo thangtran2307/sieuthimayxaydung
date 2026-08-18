@@ -2,10 +2,10 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ContactSeller } from '@/features/contact/contact-seller';
-import { createInquiry } from '@/lib/api/inquiries';
+import { createInquiry } from '@/actions/inquiry';
 import { renderWithIntl } from '@/test/test-utils';
 
-vi.mock('@/lib/api/inquiries', () => ({
+vi.mock('@/actions/inquiry', () => ({
   createInquiry: vi.fn().mockResolvedValue({ type: 'PHONE_REVEAL', sellerPhone: '0900000000' }),
 }));
 
