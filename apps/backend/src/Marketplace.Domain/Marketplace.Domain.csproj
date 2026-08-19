@@ -3,6 +3,7 @@
   <!-- TargetFramework / Nullable (disabled) / ImplicitUsings come from Directory.Build.props -->
 
   <ItemGroup>
+    <PackageReference Include="Mediator.Abstractions" Version="3.0.2" />
     <PackageReference Include="Npgsql" Version="10.0.3" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.31.0.145097">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

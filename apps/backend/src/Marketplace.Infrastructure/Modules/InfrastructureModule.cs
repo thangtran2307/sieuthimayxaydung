@@ -1,7 +1,8 @@
 using Autofac;
-using Marketplace.Application.Catalog;
+using Marketplace.Application.Categories;
 using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Common.Persistence;
+using Marketplace.Application.Listings;
 using Marketplace.Infrastructure.Auth;
 using Marketplace.Infrastructure.Common;
 using Marketplace.Infrastructure.Migrations;

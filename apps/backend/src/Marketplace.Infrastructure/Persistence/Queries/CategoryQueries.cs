@@ -1,5 +1,5 @@
 using Dapper;
-using Marketplace.Application.Catalog;
+using Marketplace.Application.Categories;
 
 namespace Marketplace.Infrastructure.Persistence.Queries;
 

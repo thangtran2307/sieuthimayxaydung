@@ -1,8 +1,9 @@
 using System.Data;
 using System.Text.Json;
 using Dapper;
-using Marketplace.Application.Catalog;
+using Marketplace.Application.Categories;
 using Marketplace.Application.Common.Models;
+using Marketplace.Application.Listings;
 
 namespace Marketplace.Infrastructure.Persistence.Queries;
 

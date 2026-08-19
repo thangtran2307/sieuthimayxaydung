@@ -24,7 +24,129 @@ namespace Marketplace.Infrastructure.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Marketplace.Domain.Catalog.Category", b =>
+            modelBuilder.Entity("Marketplace.Domain.BoostPackages.BoostPackage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("active");
+
+                    b.Property<int>("DurationDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_days");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<long>("PriceAmount")
+                        .HasColumnType("bigint")
+                        .HasColumnName("price_amount");
+
+                    b.Property<int>("PriorityLevel")
+                        .HasColumnType("integer")
+                        .HasColumnName("priority_level");
+
+                    b.Property<string>("Tier")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("tier");
+
+                    b.HasKey("Id")
+                        .HasName("pk_boost_packages");
+
+                    b.ToTable("boost_packages", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Domain.Boosts.Boost", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime?>("ActivatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("activated_at");
+
+                    b.Property<Guid?>("ActivatedByAdminId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("activated_by_admin_id");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("listing_id");
+
+                    b.Property<Guid>("PackageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("package_id");
+
+                    b.Property<string>("PaymentReference")
+                        .HasColumnType("text")
+                        .HasColumnName("payment_reference");
+
+                    b.Property<int>("PriorityLevel")
+                        .HasColumnType("integer")
+                        .HasColumnName("priority_level");
+
+                    b.Property<DateTime>("RequestedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("requested_at")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("seller_id");
+
+                    b.Property<DateTime?>("StartsAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("starts_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_boosts");
+
+                    b.HasIndex("ActivatedByAdminId")
+                        .HasDatabaseName("ix_boosts_activated_by_admin_id");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("ix_boosts_expires_at");
+
+                    b.HasIndex("ListingId")
+                        .HasDatabaseName("ix_boosts_listing_id");
+
+                    b.HasIndex("PackageId")
+                        .HasDatabaseName("ix_boosts_package_id");
+
+                    b.HasIndex("SellerId")
+                        .HasDatabaseName("ix_boosts_seller_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_boosts_status");
+
+                    b.ToTable("boosts", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Domain.Categories.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -69,7 +191,144 @@ namespace Marketplace.Infrastructure.Migrations
                     b.ToTable("categories", (string)null);
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Catalog.Listing", b =>
+            modelBuilder.Entity("Marketplace.Domain.Identities.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("CoverImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("cover_image_url");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("display_name");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<string>("GoogleId")
+                        .HasColumnType("text")
+                        .HasColumnName("google_id");
+
+                    b.Property<string>("LocationProvince")
+                        .HasColumnType("text")
+                        .HasColumnName("location_province");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("text")
+                        .HasColumnName("password_hash");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text")
+                        .HasColumnName("phone");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("role");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<bool>("Verified")
+                        .HasColumnType("boolean")
+                        .HasColumnName("verified");
+
+                    b.HasKey("Id")
+                        .HasName("pk_users");
+
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_email");
+
+                    b.HasIndex("GoogleId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_users_google_id");
+
+                    b.HasIndex("Role")
+                        .HasDatabaseName("ix_users_role");
+
+                    b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Domain.Inquiries.Inquiry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("BuyerEmail")
+                        .HasColumnType("text")
+                        .HasColumnName("buyer_email");
+
+                    b.Property<string>("BuyerName")
+                        .HasColumnType("text")
+                        .HasColumnName("buyer_name");
+
+                    b.Property<string>("BuyerPhone")
+                        .HasColumnType("text")
+                        .HasColumnName("buyer_phone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("listing_id");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("seller_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_inquiries");
+
+                    b.HasIndex("ListingId")
+                        .HasDatabaseName("ix_inquiries_listing_id");
+
+                    b.HasIndex("SellerId")
+                        .HasDatabaseName("ix_inquiries_seller_id");
+
+                    b.ToTable("inquiries", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Domain.Listings.Listing", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -209,7 +468,7 @@ namespace Marketplace.Infrastructure.Migrations
                     b.ToTable("listings", (string)null);
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Catalog.ListingPhoto", b =>
+            modelBuilder.Entity("Marketplace.Domain.Listings.ListingPhoto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,144 +505,7 @@ namespace Marketplace.Infrastructure.Migrations
                     b.ToTable("listing_photos", (string)null);
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Identity.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("CoverImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("cover_image_url");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("DisplayName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("display_name");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
-                    b.Property<string>("GoogleId")
-                        .HasColumnType("text")
-                        .HasColumnName("google_id");
-
-                    b.Property<string>("LocationProvince")
-                        .HasColumnType("text")
-                        .HasColumnName("location_province");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("text")
-                        .HasColumnName("password_hash");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("text")
-                        .HasColumnName("phone");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
-                        .HasColumnName("role");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("updated_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<bool>("Verified")
-                        .HasColumnType("boolean")
-                        .HasColumnName("verified");
-
-                    b.HasKey("Id")
-                        .HasName("pk_users");
-
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_email");
-
-                    b.HasIndex("GoogleId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_users_google_id");
-
-                    b.HasIndex("Role")
-                        .HasDatabaseName("ix_users_role");
-
-                    b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("Marketplace.Domain.Inquiry.Inquiry", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<string>("BuyerEmail")
-                        .HasColumnType("text")
-                        .HasColumnName("buyer_email");
-
-                    b.Property<string>("BuyerName")
-                        .HasColumnType("text")
-                        .HasColumnName("buyer_name");
-
-                    b.Property<string>("BuyerPhone")
-                        .HasColumnType("text")
-                        .HasColumnName("buyer_phone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("listing_id");
-
-                    b.Property<string>("Message")
-                        .HasColumnType("text")
-                        .HasColumnName("message");
-
-                    b.Property<Guid>("SellerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("seller_id");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
-                        .HasColumnName("type");
-
-                    b.HasKey("Id")
-                        .HasName("pk_inquiries");
-
-                    b.HasIndex("ListingId")
-                        .HasDatabaseName("ix_inquiries_listing_id");
-
-                    b.HasIndex("SellerId")
-                        .HasDatabaseName("ix_inquiries_seller_id");
-
-                    b.ToTable("inquiries", (string)null);
-                });
-
-            modelBuilder.Entity("Marketplace.Domain.Moderation.ModerationDecision", b =>
+            modelBuilder.Entity("Marketplace.Domain.ModerationDecisions.ModerationDecision", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -427,7 +549,7 @@ namespace Marketplace.Infrastructure.Migrations
                     b.ToTable("moderation_decisions", (string)null);
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Moderation.Report", b =>
+            modelBuilder.Entity("Marketplace.Domain.Reports.Report", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -488,131 +610,39 @@ namespace Marketplace.Infrastructure.Migrations
                     b.ToTable("reports", (string)null);
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Promotion.Boost", b =>
+            modelBuilder.Entity("Marketplace.Domain.Boosts.Boost", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                    b.HasOne("Marketplace.Domain.Identities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ActivatedByAdminId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_boosts_users_activated_by_admin_id");
 
-                    b.Property<DateTime?>("ActivatedAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("activated_at");
-
-                    b.Property<Guid?>("ActivatedByAdminId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("activated_by_admin_id");
-
-                    b.Property<DateTime?>("ExpiresAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("expires_at");
-
-                    b.Property<Guid>("ListingId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("listing_id");
-
-                    b.Property<Guid>("PackageId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("package_id");
-
-                    b.Property<string>("PaymentReference")
-                        .HasColumnType("text")
-                        .HasColumnName("payment_reference");
-
-                    b.Property<int>("PriorityLevel")
-                        .HasColumnType("integer")
-                        .HasColumnName("priority_level");
-
-                    b.Property<DateTime>("RequestedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("requested_at")
-                        .HasDefaultValueSql("timezone('utc', now())");
-
-                    b.Property<Guid>("SellerId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("seller_id");
-
-                    b.Property<DateTime?>("StartsAt")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("starts_at");
-
-                    b.Property<string>("Status")
+                    b.HasOne("Marketplace.Domain.Listings.Listing", null)
+                        .WithMany()
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
-                        .HasColumnName("status");
+                        .HasConstraintName("fk_boosts_listings_listing_id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_boosts");
+                    b.HasOne("Marketplace.Domain.BoostPackages.BoostPackage", null)
+                        .WithMany()
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_boosts_boost_packages_package_id");
 
-                    b.HasIndex("ActivatedByAdminId")
-                        .HasDatabaseName("ix_boosts_activated_by_admin_id");
-
-                    b.HasIndex("ExpiresAt")
-                        .HasDatabaseName("ix_boosts_expires_at");
-
-                    b.HasIndex("ListingId")
-                        .HasDatabaseName("ix_boosts_listing_id");
-
-                    b.HasIndex("PackageId")
-                        .HasDatabaseName("ix_boosts_package_id");
-
-                    b.HasIndex("SellerId")
-                        .HasDatabaseName("ix_boosts_seller_id");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("ix_boosts_status");
-
-                    b.ToTable("boosts", (string)null);
+                    b.HasOne("Marketplace.Domain.Identities.User", null)
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_boosts_users_seller_id");
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Promotion.BoostPackage", b =>
+            modelBuilder.Entity("Marketplace.Domain.Categories.Category", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id")
-                        .HasDefaultValueSql("gen_random_uuid()");
-
-                    b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true)
-                        .HasColumnName("active");
-
-                    b.Property<int>("DurationDays")
-                        .HasColumnType("integer")
-                        .HasColumnName("duration_days");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<long>("PriceAmount")
-                        .HasColumnType("bigint")
-                        .HasColumnName("price_amount");
-
-                    b.Property<int>("PriorityLevel")
-                        .HasColumnType("integer")
-                        .HasColumnName("priority_level");
-
-                    b.Property<string>("Tier")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
-                        .HasColumnName("tier");
-
-                    b.HasKey("Id")
-                        .HasName("pk_boost_packages");
-
-                    b.ToTable("boost_packages", (string)null);
-                });
-
-            modelBuilder.Entity("Marketplace.Domain.Catalog.Category", b =>
-                {
-                    b.HasOne("Marketplace.Domain.Catalog.Category", "Parent")
+                    b.HasOne("Marketplace.Domain.Categories.Category", "Parent")
                         .WithMany("Children")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -621,29 +651,46 @@ namespace Marketplace.Infrastructure.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Catalog.Listing", b =>
+            modelBuilder.Entity("Marketplace.Domain.Inquiries.Inquiry", b =>
                 {
-                    b.HasOne("Marketplace.Domain.Catalog.Category", null)
+                    b.HasOne("Marketplace.Domain.Listings.Listing", null)
+                        .WithMany()
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_inquiries_listings_listing_id");
+
+                    b.HasOne("Marketplace.Domain.Identities.User", null)
+                        .WithMany()
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_inquiries_users_seller_id");
+                });
+
+            modelBuilder.Entity("Marketplace.Domain.Listings.Listing", b =>
+                {
+                    b.HasOne("Marketplace.Domain.Categories.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_listings_categories_category_id");
 
-                    b.HasOne("Marketplace.Domain.Identity.User", null)
+                    b.HasOne("Marketplace.Domain.Identities.User", null)
                         .WithMany()
                         .HasForeignKey("SellerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_listings_users_seller_id");
 
-                    b.HasOne("Marketplace.Domain.Catalog.Category", null)
+                    b.HasOne("Marketplace.Domain.Categories.Category", null)
                         .WithMany()
                         .HasForeignKey("SubcategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_listings_categories_subcategory_id");
 
-                    b.OwnsOne("Marketplace.Domain.Catalog.ListingSpecs", "Specs", b1 =>
+                    b.OwnsOne("Marketplace.Domain.Listings.ListingSpecs", "Specs", b1 =>
                         {
                             b1.Property<Guid>("ListingId")
                                 .ValueGeneratedOnAdd();
@@ -676,9 +723,9 @@ namespace Marketplace.Infrastructure.Migrations
                     b.Navigation("Specs");
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Catalog.ListingPhoto", b =>
+            modelBuilder.Entity("Marketplace.Domain.Listings.ListingPhoto", b =>
                 {
-                    b.HasOne("Marketplace.Domain.Catalog.Listing", null)
+                    b.HasOne("Marketplace.Domain.Listings.Listing", null)
                         .WithMany("Photos")
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -686,33 +733,16 @@ namespace Marketplace.Infrastructure.Migrations
                         .HasConstraintName("fk_listing_photos_listings_listing_id");
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Inquiry.Inquiry", b =>
+            modelBuilder.Entity("Marketplace.Domain.ModerationDecisions.ModerationDecision", b =>
                 {
-                    b.HasOne("Marketplace.Domain.Catalog.Listing", null)
-                        .WithMany()
-                        .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_inquiries_listings_listing_id");
-
-                    b.HasOne("Marketplace.Domain.Identity.User", null)
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_inquiries_users_seller_id");
-                });
-
-            modelBuilder.Entity("Marketplace.Domain.Moderation.ModerationDecision", b =>
-                {
-                    b.HasOne("Marketplace.Domain.Identity.User", null)
+                    b.HasOne("Marketplace.Domain.Identities.User", null)
                         .WithMany()
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_moderation_decisions_users_admin_id");
 
-                    b.HasOne("Marketplace.Domain.Catalog.Listing", null)
+                    b.HasOne("Marketplace.Domain.Listings.Listing", null)
                         .WithMany()
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -720,58 +750,28 @@ namespace Marketplace.Infrastructure.Migrations
                         .HasConstraintName("fk_moderation_decisions_listings_listing_id");
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Moderation.Report", b =>
+            modelBuilder.Entity("Marketplace.Domain.Reports.Report", b =>
                 {
-                    b.HasOne("Marketplace.Domain.Catalog.Listing", null)
+                    b.HasOne("Marketplace.Domain.Listings.Listing", null)
                         .WithMany()
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_reports_listings_listing_id");
 
-                    b.HasOne("Marketplace.Domain.Identity.User", null)
+                    b.HasOne("Marketplace.Domain.Identities.User", null)
                         .WithMany()
                         .HasForeignKey("ResolvedByAdminId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("fk_reports_users_resolved_by_admin_id");
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Promotion.Boost", b =>
-                {
-                    b.HasOne("Marketplace.Domain.Identity.User", null)
-                        .WithMany()
-                        .HasForeignKey("ActivatedByAdminId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_boosts_users_activated_by_admin_id");
-
-                    b.HasOne("Marketplace.Domain.Catalog.Listing", null)
-                        .WithMany()
-                        .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_boosts_listings_listing_id");
-
-                    b.HasOne("Marketplace.Domain.Promotion.BoostPackage", null)
-                        .WithMany()
-                        .HasForeignKey("PackageId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_boosts_boost_packages_package_id");
-
-                    b.HasOne("Marketplace.Domain.Identity.User", null)
-                        .WithMany()
-                        .HasForeignKey("SellerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_boosts_users_seller_id");
-                });
-
-            modelBuilder.Entity("Marketplace.Domain.Catalog.Category", b =>
+            modelBuilder.Entity("Marketplace.Domain.Categories.Category", b =>
                 {
                     b.Navigation("Children");
                 });
 
-            modelBuilder.Entity("Marketplace.Domain.Catalog.Listing", b =>
+            modelBuilder.Entity("Marketplace.Domain.Listings.Listing", b =>
                 {
                     b.Navigation("Photos");
                 });

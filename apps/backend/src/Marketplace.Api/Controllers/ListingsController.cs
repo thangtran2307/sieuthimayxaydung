@@ -1,8 +1,8 @@
 using Asp.Versioning;
-using Marketplace.Application.Catalog;
 using Marketplace.Application.Common.Models;
-using Marketplace.Application.Inquiry;
-using Marketplace.Application.Moderation;
+using Marketplace.Application.Inquiries;
+using Marketplace.Application.Listings;
+using Marketplace.Application.Reports;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 

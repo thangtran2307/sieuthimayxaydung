@@ -1,8 +1,11 @@
-using Marketplace.Domain.Catalog;
-using Marketplace.Domain.Identity;
-using Marketplace.Domain.Moderation;
-using Marketplace.Domain.Promotion;
-using InquiryEntity = Marketplace.Domain.Inquiry.Inquiry;
+using Marketplace.Domain.BoostPackages;
+using Marketplace.Domain.Boosts;
+using Marketplace.Domain.Categories;
+using Marketplace.Domain.Identities;
+using Marketplace.Domain.Inquiries;
+using Marketplace.Domain.Listings;
+using Marketplace.Domain.ModerationDecisions;
+using Marketplace.Domain.Reports;
 
 namespace Marketplace.Infrastructure.Persistence;
 
@@ -29,7 +32,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
 
     public DbSet<ModerationDecision> ModerationDecisions => Set<ModerationDecision>();
 
-    public DbSet<InquiryEntity> Inquiries => Set<InquiryEntity>();
+    public DbSet<Inquiry> Inquiries => Set<Inquiry>();
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {

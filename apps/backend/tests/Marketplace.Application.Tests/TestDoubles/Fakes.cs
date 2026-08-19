@@ -1,10 +1,11 @@
-using Marketplace.Application.Catalog;
+using System.Linq.Expressions;
 using Marketplace.Application.Common.Models;
 using Marketplace.Application.Common.Persistence;
-using Marketplace.Domain.Catalog;
+using Marketplace.Application.Listings;
 using Marketplace.Domain.Common;
-using Marketplace.Domain.Moderation;
-using InquiryEntity = Marketplace.Domain.Inquiry.Inquiry;
+using Marketplace.Domain.Inquiries;
+using Marketplace.Domain.Listings;
+using Marketplace.Domain.Reports;
 
 namespace Marketplace.Application.Tests.TestDoubles;
 
@@ -41,15 +42,15 @@ internal sealed class FakeListingQueries : IListingQueries
         Task.FromResult(ContactResult);
 }
 
-/// <summary>Generic in-memory write repository recording added entities and returning a preset root.</summary>
+/// <summary>Generic in-memory base for per-aggregate fake repositories.</summary>
 internal class FakeRepository<T> : IRepository<T>
-    where T : Entity
+    where T : Entity, IAggregateRoot
 {
     public List<T> Added { get; } = [];
 
     public T ToReturn { get; set; }
 
-    public Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+    public Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default) =>
         Task.FromResult(ToReturn);
 
     public Task AddAsync(T entity, CancellationToken cancellationToken = default)
@@ -58,33 +59,41 @@ internal class FakeRepository<T> : IRepository<T>
         return Task.CompletedTask;
     }
 
-    public void Update(T entity)
-    {
-    }
+    public void Update(T entity) { }
 
-    public void Remove(T entity)
-    {
-    }
+    public void Remove(T entity) { }
 }
+
+internal sealed class FakeListingRepository : FakeRepository<Listing>, IListingRepository;
+
+internal sealed class FakeInquiryRepository : FakeRepository<Inquiry>, IInquiryRepository;
+
+internal sealed class FakeReportRepository : FakeRepository<Report>, IReportRepository;
 
 /// <summary>In-memory unit of work exposing the fake repositories and counting commits.</summary>
 internal sealed class FakeUnitOfWork : IUnitOfWork
 {
-    public FakeRepository<Listing> Listings { get; } = new();
+    public FakeListingRepository Listings { get; } = new();
 
-    public FakeRepository<InquiryEntity> Inquiries { get; } = new();
+    public FakeInquiryRepository Inquiries { get; } = new();
 
-    public FakeRepository<Report> Reports { get; } = new();
+    public FakeReportRepository Reports { get; } = new();
 
     public int SaveChangesCallCount { get; private set; }
 
-    IRepository<Listing> IUnitOfWork.ListingRepository => Listings;
+    IListingRepository IUnitOfWork.ListingRepository => Listings;
 
-    IRepository<InquiryEntity> IUnitOfWork.InquiryRepository => Inquiries;
+    IInquiryRepository IUnitOfWork.InquiryRepository => Inquiries;
 
-    IRepository<Report> IUnitOfWork.ReportRepository => Reports;
+    IReportRepository IUnitOfWork.ReportRepository => Reports;
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        SaveChangesCallCount++;
+        return Task.FromResult(1);
+    }
+
+    public Task<int> SaveChangesAndPublishEventsAsync(CancellationToken cancellationToken = default)
     {
         SaveChangesCallCount++;
         return Task.FromResult(1);

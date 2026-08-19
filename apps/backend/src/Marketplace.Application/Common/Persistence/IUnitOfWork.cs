@@ -1,6 +1,6 @@
-using Marketplace.Domain.Catalog;
-using Marketplace.Domain.Moderation;
-using InquiryEntity = Marketplace.Domain.Inquiry.Inquiry;
+using Marketplace.Domain.Inquiries;
+using Marketplace.Domain.Listings;
+using Marketplace.Domain.Reports;
 
 namespace Marketplace.Application.Common.Persistence;
 
@@ -12,11 +12,19 @@ namespace Marketplace.Application.Common.Persistence;
 /// </summary>
 public interface IUnitOfWork
 {
-    IRepository<Listing> ListingRepository { get; }
+    IListingRepository ListingRepository { get; }
 
-    IRepository<InquiryEntity> InquiryRepository { get; }
+    IInquiryRepository InquiryRepository { get; }
 
-    IRepository<Report> ReportRepository { get; }
+    IReportRepository ReportRepository { get; }
 
+    /// <summary>Persists all tracked changes and returns the number of affected rows.</summary>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Persists all tracked changes, then publishes any domain events raised by aggregates during
+    /// the use case. Events are dispatched after the commit so side-effects never run on a
+    /// rolled-back write.
+    /// </summary>
+    Task<int> SaveChangesAndPublishEventsAsync(CancellationToken cancellationToken = default);
 }

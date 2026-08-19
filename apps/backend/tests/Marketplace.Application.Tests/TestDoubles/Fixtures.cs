@@ -1,5 +1,6 @@
 using System.Text.Json;
-using Marketplace.Application.Catalog;
+using Marketplace.Application.Categories;
+using Marketplace.Application.Listings;
 using Marketplace.Domain.Common;
 
 namespace Marketplace.Application.Tests.TestDoubles;

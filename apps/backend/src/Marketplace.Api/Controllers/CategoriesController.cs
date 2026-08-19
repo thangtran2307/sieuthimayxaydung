@@ -1,5 +1,5 @@
 using Asp.Versioning;
-using Marketplace.Application.Catalog;
+using Marketplace.Application.Categories;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 

@@ -6,9 +6,9 @@ namespace Marketplace.Domain.Common;
 /// is the job of the unit of work. Reads/queries use the Dapper query classes (CQRS read/write split).
 /// </summary>
 public interface IRepository<T>
-    where T : Entity
+    where T : Entity, IAggregateRoot
 {
-    Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
     Task AddAsync(T entity, CancellationToken cancellationToken = default);
 
