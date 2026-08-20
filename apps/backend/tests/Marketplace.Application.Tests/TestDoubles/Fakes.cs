@@ -6,6 +6,7 @@ using Marketplace.Domain.Common;
 using Marketplace.Domain.Inquiries;
 using Marketplace.Domain.Listings;
 using Marketplace.Domain.Reports;
+using Marketplace.Domain.Samples;
 
 namespace Marketplace.Application.Tests.TestDoubles;
 
@@ -86,6 +87,8 @@ internal sealed class FakeUnitOfWork : IUnitOfWork
     IInquiryRepository IUnitOfWork.InquiryRepository => Inquiries;
 
     IReportRepository IUnitOfWork.ReportRepository => Reports;
+
+    public ISampleRepository SampleRepository => throw new NotImplementedException();
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

@@ -2,6 +2,7 @@ using Marketplace.Application.Common.Persistence;
 using Marketplace.Domain.Inquiries;
 using Marketplace.Domain.Listings;
 using Marketplace.Domain.Reports;
+using Marketplace.Domain.Samples;
 using Marketplace.Infrastructure.Persistence.Repositories;
 using Mediator;
 
@@ -16,6 +17,7 @@ public sealed class EfUnitOfWork(MarketplaceDbContext dbContext, IPublisher publ
     private IListingRepository _listingRepository;
     private IInquiryRepository _inquiryRepository;
     private IReportRepository _reportRepository;
+    private ISampleRepository _sampleRepository;
 
     public IListingRepository ListingRepository =>
         _listingRepository ??= new ListingRepository(dbContext);
@@ -25,6 +27,9 @@ public sealed class EfUnitOfWork(MarketplaceDbContext dbContext, IPublisher publ
 
     public IReportRepository ReportRepository =>
         _reportRepository ??= new ReportRepository(dbContext);
+
+    public ISampleRepository SampleRepository =>
+        _sampleRepository ??= new SampleRepository(dbContext);
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
         dbContext.SaveChangesAsync(cancellationToken);

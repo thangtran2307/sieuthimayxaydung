@@ -1,6 +1,7 @@
 using Marketplace.Domain.Inquiries;
 using Marketplace.Domain.Listings;
 using Marketplace.Domain.Reports;
+using Marketplace.Domain.Samples;
 
 namespace Marketplace.Application.Common.Persistence;
 
@@ -17,6 +18,8 @@ public interface IUnitOfWork
     IInquiryRepository InquiryRepository { get; }
 
     IReportRepository ReportRepository { get; }
+
+    ISampleRepository SampleRepository { get; }
 
     /// <summary>Persists all tracked changes and returns the number of affected rows.</summary>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

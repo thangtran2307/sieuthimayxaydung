@@ -3,6 +3,7 @@ using Marketplace.Application.Categories;
 using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Common.Persistence;
 using Marketplace.Application.Listings;
+using Marketplace.Application.Samples;
 using Marketplace.Infrastructure.Auth;
 using Marketplace.Infrastructure.Common;
 using Marketplace.Infrastructure.Migrations;
@@ -27,6 +28,7 @@ public sealed class InfrastructureModule : Module
         // Read side: Dapper query classes on the read connection (CQRS split).
         builder.RegisterType<CategoryQueries>().As<ICategoryQueries>().InstancePerLifetimeScope();
         builder.RegisterType<ListingQueries>().As<IListingQueries>().InstancePerLifetimeScope();
+        builder.RegisterType<SampleQueries>().As<ISampleQueries>().InstancePerLifetimeScope();
         builder.RegisterType<SystemClock>().As<IClock>().SingleInstance();
         builder.RegisterType<PasswordHasherAdapter>().As<IPasswordHasher>().SingleInstance();
         builder.RegisterType<JwtTokenService>().As<IJwtTokenService>().SingleInstance();
