@@ -6,7 +6,6 @@ internal sealed class SampleRepository(MarketplaceDbContext dbContext) : BaseEfR
 {
     public async Task<Sample> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await DbContext.Set<Sample>().FirstOrDefaultAsync(s => s.Id == id, cancellationToken)
-            ?? throw new InvalidOperationException($"Sample with ID '{id}' not found.");
+        return await DbContext.Set<Sample>().FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
 }

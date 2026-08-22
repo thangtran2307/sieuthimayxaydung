@@ -25,4 +25,28 @@ public class SamplesController(IMediator mediator) : ControllerBase
 
         return Ok(sample);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateSample([FromBody] CreateSampleRequest request, CancellationToken cancellationToken)
+    {
+        var command = new CreateSampleCommand(request);
+        var sample = await mediator.Send(command, cancellationToken);
+        return Ok(sample);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateSample([FromRoute] Guid id, [FromBody] CreateSampleRequest request, CancellationToken cancellationToken)
+    {
+        var command = new UpdateSampleCommand(id, request);
+        var sample = await mediator.Send(command, cancellationToken);
+        return Ok(sample);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteSample([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var command = new DeleteSampleCommand(id);
+        var sample = await mediator.Send(command, cancellationToken);
+        return Ok(sample);
+    }
 }

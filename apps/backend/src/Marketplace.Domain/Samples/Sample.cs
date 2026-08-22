@@ -4,4 +4,10 @@ public class Sample(string fieldOne, string fieldTwo) : Entity<Guid>, IAggregate
 {
     public string FieldOne { get; private set; } = fieldOne;
     public string FieldTwo { get; private set; } = fieldTwo;
+
+    public void Update(string fieldOne, string fieldTwo)
+    {
+        FieldOne = fieldOne;
+        FieldTwo = fieldTwo;
+    }
 }

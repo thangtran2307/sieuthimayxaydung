@@ -26,7 +26,7 @@ public sealed class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provi
                 {
                     Title = "Marketplace API",
                     Version = description.ApiVersion.ToString(),
-                    Description = description.IsDeprecated ? "This API version has been deprecated." : null,
+                    Description = description.IsDeprecated ? "This API version has been deprecated." : null
                 });
         }
 
@@ -39,7 +39,7 @@ public sealed class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provi
             BearerFormat = "JWT",
             In = ParameterLocation.Header,
             Name = "Authorization",
-            Description = "Paste a JWT access token (no 'Bearer ' prefix needed).",
+            Description = "Paste a JWT access token (no 'Bearer ' prefix needed)."
         });
 
         // Internal API key — sent as the `X-Api-Key` header (used by /internal endpoints).
@@ -48,7 +48,7 @@ public sealed class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provi
             Type = SecuritySchemeType.ApiKey,
             In = ParameterLocation.Header,
             Name = "X-Api-Key",
-            Description = "Internal API key for maintenance endpoints.",
+            Description = "Internal API key for maintenance endpoints."
         });
 
         options.DocumentFilter<SecurityRequirementsDocumentFilter>();
