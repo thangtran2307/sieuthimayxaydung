@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { ReportListing } from '@/features/report/report-listing';
+import { ReportListing } from '@/features/reports/report-listing';
 import { createReport } from '@/actions/report';
 import { renderWithIntl } from '@/test/test-utils';
 

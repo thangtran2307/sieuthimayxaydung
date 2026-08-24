@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { ContactSeller } from '@/features/contact/contact-seller';
+import { ContactSeller } from '@/features/inquiries/contact-seller';
 import { createInquiry } from '@/actions/inquiry';
 import { renderWithIntl } from '@/test/test-utils';
 

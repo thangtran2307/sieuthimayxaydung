@@ -2,11 +2,12 @@ import { Package } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 import { EmptyState } from '@/components/empty-state';
-import { CategoryGrid, CategoryGridSkeleton } from '@/features/catalog/category-grid';
+import { CategoryGrid, CategoryGridSkeleton } from '@/features/categories/category-grid';
 import { ListingCard } from '@/features/listings/listing-card';
 import { ListingGridSkeleton } from '@/features/listings/listing-skeletons';
 import { SearchBar } from '@/features/search/search-bar';
-import { getCategories, searchListings } from '@/lib/api/catalog';
+import { getCategories } from '@/lib/api/categories';
+import { searchListings } from '@/lib/api/listings';
 import { logger } from '@/lib/logger';
 
 // Live marketplace data — render per request (never serve build-time-empty static HTML).

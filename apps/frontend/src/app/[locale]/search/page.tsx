@@ -7,7 +7,8 @@ import { ListingGrid } from '@/features/listings/listing-grid';
 import { Pagination } from '@/features/search/pagination';
 import { SearchFilters } from '@/features/search/search-filters';
 import { SearchFiltersSkeleton, SearchResultsSkeleton } from '@/features/search/search-skeletons';
-import { getCategories, searchListings } from '@/lib/api/catalog';
+import { getCategories } from '@/lib/api/categories';
+import { searchListings } from '@/lib/api/listings';
 import { logger } from '@/lib/logger';
 
 const PAGE_SIZE = 20;

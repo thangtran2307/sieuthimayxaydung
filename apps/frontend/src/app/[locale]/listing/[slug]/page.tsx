@@ -6,13 +6,16 @@ import { Badge } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { EmptyState } from '@/components/empty-state';
 import type { ListingDetail } from '@/contracts';
-import { ContactSeller } from '@/features/contact/contact-seller';
+import { ContactSeller } from '@/features/inquiries/contact-seller';
 import { ListingGallery } from '@/features/listings/listing-gallery';
-import { ReportListing } from '@/features/report/report-listing';
+import { ReportListing } from '@/features/reports/report-listing';
 import { Link } from '@/i18n/navigation';
-import { getListingBySlug } from '@/lib/api/catalog';
+import { getListingBySlug } from '@/lib/api/listings';
 import { formatDate, formatPrice } from '@/lib/format';
 import { logger } from '@/lib/logger';
+
+// Live data — render per request so navigating back always shows the current listing state.
+export const dynamic = 'force-dynamic';
 
 /** Request-scoped cache so metadata + the page share one fetch (one view increment). */
 const loadListing = cache(async (slug: string): Promise<ListingDetail | null> => {
