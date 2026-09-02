@@ -12,4 +12,15 @@ public class ListingPhoto : Entity<Guid>
     public int? Width { get; private set; }
 
     public int? Height { get; private set; }
+
+    /// <summary>Creates a photo for a listing's gallery.</summary>
+    public static ListingPhoto Create(Guid listingId, string url, int sortOrder, int? width = null, int? height = null) => new()
+    {
+        Id = Guid.NewGuid(),
+        ListingId = listingId,
+        Url = url,
+        SortOrder = sortOrder,
+        Width = width,
+        Height = height,
+    };
 }

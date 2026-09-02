@@ -1,3 +1,4 @@
+using Marketplace.Domain.Identities;
 using Marketplace.Domain.Inquiries;
 using Marketplace.Domain.Listings;
 using Marketplace.Domain.Reports;
@@ -12,6 +13,8 @@ namespace Marketplace.Application.Common.Persistence;
 /// </summary>
 public interface IUnitOfWork
 {
+    IUserRepository UserRepository { get; }
+
     IListingRepository ListingRepository { get; }
 
     IInquiryRepository InquiryRepository { get; }

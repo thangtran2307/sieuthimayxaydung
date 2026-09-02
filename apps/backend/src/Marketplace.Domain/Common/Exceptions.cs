@@ -19,8 +19,8 @@ public sealed class NotFoundException(string message = "Resource not found", str
 public sealed class ForbiddenException(string message = "Forbidden", string code = ErrorCodes.Forbidden)
     : AppException(code, message);
 
-public sealed class UnauthenticatedException(string message = "Not authenticated")
-    : AppException(ErrorCodes.Unauthenticated, message);
+public sealed class UnauthenticatedException(string message = "Not authenticated", string code = ErrorCodes.Unauthenticated)
+    : AppException(code, message);
 
 public sealed class ConflictException(string code, string message = "Conflict")
     : AppException(code, message);

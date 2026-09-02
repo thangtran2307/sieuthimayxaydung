@@ -17,4 +17,9 @@ public interface IListingQueries
 
     /// <summary>Returns contact/status info for a listing regardless of status, or null if missing.</summary>
     Task<ListingContact> GetListingContactAsync(Guid listingId, CancellationToken cancellationToken = default);
+
+    /// <summary>Returns all of a seller's own listings (any status) for their dashboard (FR-018).</summary>
+    Task<IReadOnlyList<SellerListingDto>> GetSellerListingsAsync(
+        Guid sellerId,
+        CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,5 @@
 using Marketplace.Application.Common.Persistence;
+using Marketplace.Domain.Identities;
 using Marketplace.Domain.Inquiries;
 using Marketplace.Domain.Listings;
 using Marketplace.Domain.Reports;
@@ -13,9 +14,13 @@ namespace Marketplace.Infrastructure.Persistence;
 /// </summary>
 public sealed class EfUnitOfWork(MarketplaceDbContext dbContext, IPublisher publisher) : IUnitOfWork
 {
+    private IUserRepository _userRepository;
     private IListingRepository _listingRepository;
     private IInquiryRepository _inquiryRepository;
     private IReportRepository _reportRepository;
+
+    public IUserRepository UserRepository =>
+        _userRepository ??= new UserRepository(dbContext);
 
     public IListingRepository ListingRepository =>
         _listingRepository ??= new ListingRepository(dbContext);

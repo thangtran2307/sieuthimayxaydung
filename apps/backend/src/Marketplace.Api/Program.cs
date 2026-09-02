@@ -4,10 +4,12 @@ using Autofac.Extensions.DependencyInjection;
 using FluentValidation;
 using Marketplace.Api.Http;
 using Marketplace.Api.Middleware;
+using Marketplace.Api.Security;
 using Marketplace.Api.Startup;
 using Marketplace.Api.Swagger;
 using Marketplace.Api.Validation;
 using Marketplace.Application;
+using Marketplace.Application.Common.Auth;
 using Marketplace.Infrastructure;
 using Marketplace.Infrastructure.Configuration;
 using Marketplace.Infrastructure.Modules;
@@ -74,6 +76,10 @@ builder.Services.AddHealthChecks().AddDbContextCheck<MarketplaceDbContext>("data
 
 // ── Authentication (JWT from httpOnly cookie) + authorization ───────────────────
 builder.Services.AddCookieJwtAuthentication(builder.Configuration);
+
+// ── Current-user accessor: reads the authenticated caller from the request's JWT claims ──
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 
 // ── CORS for the frontend origin (required; default lives in appsettings, not in code) ──
 string frontendUrl = builder.Configuration["FrontendUrl"]

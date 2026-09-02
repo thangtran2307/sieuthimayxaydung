@@ -46,6 +46,71 @@ public class Listing : Entity<Guid>, IAggregateRoot
 
     public ICollection<ListingPhoto> Photos { get; private set; } = new List<ListingPhoto>();
 
+    /// <summary>
+    /// Creates a new listing owned by a seller. Every listing starts PENDING and is not public until
+    /// an admin approves it (FR-016); photos are attached via <see cref="AddPhoto"/>.
+    /// </summary>
+    public static Listing Create(Guid sellerId, string slug, ListingDetails details, DateTime now) => new()
+    {
+        Id = Guid.NewGuid(),
+        SellerId = sellerId,
+        CategoryId = details.CategoryId,
+        SubcategoryId = details.SubcategoryId,
+        Title = details.Title,
+        Slug = slug,
+        Condition = details.Condition,
+        PriceAmount = details.PriceContact ? null : details.PriceAmount,
+        PriceContact = details.PriceContact,
+        Currency = "VND",
+        LocationProvince = details.LocationProvince,
+        Description = details.Description,
+        Specs = details.Specs ?? new ListingSpecs(),
+        Status = ListingStatus.PENDING,
+        CreatedAt = now,
+        UpdatedAt = now,
+    };
+
+    /// <summary>Attaches a photo to the gallery (SortOrder drives display order; 0 = primary).</summary>
+    public void AddPhoto(string url, int sortOrder, int? width = null, int? height = null) =>
+        Photos.Add(ListingPhoto.Create(Id, url, sortOrder, width, height));
+
+    /// <summary>
+    /// Applies a seller's edits to the mutable fields. Status is left unchanged; re-moderation of
+    /// edited content is a separate policy handled by the moderation flow (US3).
+    /// </summary>
+    public void UpdateDetails(ListingDetails details, DateTime now)
+    {
+        CategoryId = details.CategoryId;
+        SubcategoryId = details.SubcategoryId;
+        Title = details.Title;
+        Condition = details.Condition;
+        PriceAmount = details.PriceContact ? null : details.PriceAmount;
+        PriceContact = details.PriceContact;
+        LocationProvince = details.LocationProvince;
+        Description = details.Description;
+        Specs = details.Specs ?? new ListingSpecs();
+        UpdatedAt = now;
+    }
+
+    /// <summary>Marks an active listing as sold, removing it from public discovery.</summary>
+    public void MarkSold(DateTime now)
+    {
+        if (Status is not (ListingStatus.ACTIVE or ListingStatus.PENDING))
+        {
+            throw new DomainRuleException("Only an active or pending listing can be marked sold.");
+        }
+
+        Status = ListingStatus.SOLD;
+        UpdatedAt = now;
+    }
+
+    /// <summary>Soft-deletes the listing (seller removal); the row is retained for audit (FR-030).</summary>
+    public void Remove(DateTime now)
+    {
+        Status = ListingStatus.REMOVED;
+        UpdatedAt = now;
+    }
+
     /// <summary>Records a buyer view of this listing (write side; persisted via the unit of work).</summary>
     public void RegisterView() => ViewCount++;
 }

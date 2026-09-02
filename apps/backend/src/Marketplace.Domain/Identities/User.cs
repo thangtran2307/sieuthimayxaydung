@@ -26,4 +26,28 @@ public class User : Entity<Guid>, IAggregateRoot
     public DateTime CreatedAt { get; private set; }
 
     public DateTime UpdatedAt { get; private set; }
+
+    /// <summary>
+    /// Registers a new seller account (email/password). Any registered user may post immediately;
+    /// trust is enforced by per-listing moderation, not account pre-approval (FR-013a).
+    /// </summary>
+    public static User Register(
+        string email,
+        string passwordHash,
+        string displayName,
+        DateTime now,
+        string phone = null,
+        string locationProvince = null) => new()
+        {
+            Id = Guid.NewGuid(),
+            Email = email,
+            PasswordHash = passwordHash,
+            DisplayName = displayName,
+            Phone = phone,
+            LocationProvince = locationProvince,
+            Role = UserRole.SELLER,
+            Verified = false,
+            CreatedAt = now,
+            UpdatedAt = now,
+        };
 }

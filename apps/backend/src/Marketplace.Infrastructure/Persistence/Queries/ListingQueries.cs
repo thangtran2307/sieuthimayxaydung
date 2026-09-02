@@ -196,6 +196,29 @@ internal sealed class ListingQueries(ReadDbConnectionFactory connectionFactory, 
             row.PublishedAt);
     }
 
+    public async Task<IReadOnlyList<SellerListingDto>> GetSellerListingsAsync(
+        Guid sellerId,
+        CancellationToken cancellationToken = default)
+    {
+        const string sql = """
+            SELECT
+                l.id, l.slug, l.title, l.status, l.price_amount, l.price_contact, l.currency,
+                l.view_count, l.created_at, l.published_at,
+                (SELECT p.url FROM listing_photos p
+                 WHERE p.listing_id = l.id ORDER BY p.sort_order LIMIT 1) AS thumbnail_url
+            FROM listings l
+            WHERE l.seller_id = @sellerId AND l.status <> 'REMOVED'
+            ORDER BY l.created_at DESC
+            """;
+
+        using var connection = connectionFactory.Create();
+        var rows = await connection.QueryAsync<SellerListingDto>(new CommandDefinition(
+            sql,
+            new { sellerId },
+            cancellationToken: cancellationToken));
+        return rows.AsList();
+    }
+
     public async Task<ListingContact> GetListingContactAsync(
         Guid listingId,
         CancellationToken cancellationToken = default)
