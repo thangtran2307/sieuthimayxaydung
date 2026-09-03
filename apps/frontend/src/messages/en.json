@@ -98,5 +98,9 @@
     "cancel": "Cancel",
     "submitted": "Thanks — your report has been submitted.",
     "error": "Something went wrong. Please try again."
+  },
+  "sample": {
+    "title": "Sample",
+    "description": "This is a sample page for testing features."
   }
 }

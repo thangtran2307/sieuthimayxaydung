@@ -98,5 +98,9 @@
     "cancel": "Hủy",
     "submitted": "Cảm ơn — báo cáo của bạn đã được gửi.",
     "error": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
+  "sample": {
+    "title": "Mẫu",
+    "description": "Đây là trang mẫu để thử nghiệm các tính năng."
   }
 }
