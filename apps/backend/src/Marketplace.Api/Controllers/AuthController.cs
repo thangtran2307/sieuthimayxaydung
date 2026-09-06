@@ -3,6 +3,7 @@ using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Identities;
 using Marketplace.Infrastructure.Configuration;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -43,6 +44,12 @@ public sealed class AuthController(IMediator mediator, IOptions<JwtOptions> jwtO
         SetAuthCookies(result.Tokens);
         return result.User;
     }
+
+    /// <summary>Returns the authenticated caller's account summary.</summary>
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<AuthUserDto> Me(CancellationToken cancellationToken) =>
+        await mediator.Send(new GetCurrentUserQuery(), cancellationToken);
 
     /// <summary>Rotates the session using the refresh-token cookie.</summary>
     [HttpPost("refresh")]

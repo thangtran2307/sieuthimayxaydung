@@ -7,7 +7,34 @@
     "search": "Tìm kiếm máy móc",
     "postListing": "Đăng tin",
     "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất",
     "language": "Ngôn ngữ"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Mật khẩu",
+    "displayName": "Tên hiển thị",
+    "phone": "Số điện thoại (tùy chọn)",
+    "locationProvince": "Tỉnh/Thành (tùy chọn)",
+    "login": {
+      "title": "Đăng nhập",
+      "submit": "Đăng nhập",
+      "noAccount": "Chưa có tài khoản?",
+      "registerLink": "Đăng ký"
+    },
+    "register": {
+      "title": "Tạo tài khoản người bán",
+      "submit": "Tạo tài khoản",
+      "haveAccount": "Đã có tài khoản?",
+      "loginLink": "Đăng nhập"
+    },
+    "errors": {
+      "invalidCredentials": "Email hoặc mật khẩu không đúng.",
+      "emailInUse": "Email này đã được đăng ký.",
+      "validation": "Vui lòng kiểm tra lại thông tin.",
+      "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
   },
   "home": {
     "heroTitle": "Mua bán máy móc xây dựng",

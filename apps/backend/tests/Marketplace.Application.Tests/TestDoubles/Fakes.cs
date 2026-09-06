@@ -3,6 +3,7 @@ using Marketplace.Application.Categories;
 using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Common.Models;
 using Marketplace.Application.Common.Persistence;
+using Marketplace.Application.Identities;
 using Marketplace.Application.Listings;
 using Marketplace.Domain.Common;
 using Marketplace.Domain.Identities;
@@ -11,6 +12,15 @@ using Marketplace.Domain.Listings;
 using Marketplace.Domain.Reports;
 
 namespace Marketplace.Application.Tests.TestDoubles;
+
+/// <summary>In-memory user read side.</summary>
+internal sealed class FakeUserQueries : IUserQueries
+{
+    public AuthUserDto Result { get; set; }
+
+    public Task<AuthUserDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Result);
+}
 
 /// <summary>In-memory category read side; nodes are looked up by id from a seeded list.</summary>
 internal sealed class FakeCategoryQueries : ICategoryQueries

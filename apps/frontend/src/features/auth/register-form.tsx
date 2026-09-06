@@ -1,0 +1,101 @@
+'use client';
+
+import { Loader2 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { useState, useTransition, type SyntheticEvent } from 'react';
+import { register } from '@/actions/auth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { useRouter } from '@/i18n/navigation';
+import { formString } from '@/lib/utils';
+import { authErrorKey } from './auth-errors';
+
+/** Seller registration form. On success the account is created, a session starts, and we go home. */
+export function RegisterForm() {
+  const t = useTranslations('auth');
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, startSubmit] = useTransition();
+
+  const onSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const data = new FormData(form);
+    startSubmit(async () => {
+      setError(null);
+      const result = await register({
+        email: formString(data, 'email'),
+        password: formString(data, 'password'),
+        displayName: formString(data, 'displayName'),
+        phone: formString(data, 'phone') || undefined,
+        locationProvince: formString(data, 'locationProvince') || undefined,
+      });
+
+      if (result.ok) {
+        router.refresh();
+        router.push('/');
+        return;
+      }
+
+      setError(t(authErrorKey(result.code)));
+    });
+  };
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <div className="space-y-1.5">
+        <label htmlFor="displayName" className="text-sm font-medium text-slate-700">
+          {t('displayName')}
+        </label>
+        <Input id="displayName" name="displayName" required maxLength={120} autoComplete="name" />
+      </div>
+
+      <div className="space-y-1.5">
+        <label htmlFor="email" className="text-sm font-medium text-slate-700">
+          {t('email')}
+        </label>
+        <Input id="email" name="email" type="email" required autoComplete="email" />
+      </div>
+
+      <div className="space-y-1.5">
+        <label htmlFor="password" className="text-sm font-medium text-slate-700">
+          {t('password')}
+        </label>
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          required
+          minLength={8}
+          autoComplete="new-password"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <label htmlFor="phone" className="text-sm font-medium text-slate-700">
+          {t('phone')}
+        </label>
+        <Input id="phone" name="phone" type="tel" maxLength={32} autoComplete="tel" />
+      </div>
+
+      <div className="space-y-1.5">
+        <label htmlFor="locationProvince" className="text-sm font-medium text-slate-700">
+          {t('locationProvince')}
+        </label>
+        <Input id="locationProvince" name="locationProvince" maxLength={120} />
+      </div>
+
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+
+      <Button type="submit" className="w-full" disabled={pending}>
+        {pending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : null}
+        {t('register.submit')}
+      </Button>
+    </form>
+  );
+}

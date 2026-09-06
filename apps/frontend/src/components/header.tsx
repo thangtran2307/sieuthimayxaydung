@@ -1,11 +1,14 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
+import { UserMenu } from '@/features/auth/user-menu';
 import { Link } from '@/i18n/navigation';
+import { getCurrentUser } from '@/lib/auth/session';
 import { LanguageSwitcher } from './language-switcher';
 
-/** Site header with brand, primary actions, and the language toggle. */
-export function Header() {
-  const t = useTranslations('header');
-  const tApp = useTranslations('app');
+/** Site header with brand, session-aware actions, and the language toggle. */
+export async function Header() {
+  const t = await getTranslations('header');
+  const tApp = await getTranslations('app');
+  const user = await getCurrentUser();
 
   return (
     <header className="border-b border-slate-200 bg-white">
@@ -17,9 +20,18 @@ export function Header() {
           <Link href="/post" className="text-sm font-medium text-brand hover:text-accent">
             {t('postListing')}
           </Link>
-          <Link href="/login" className="text-sm font-medium text-brand hover:text-accent">
-            {t('login')}
-          </Link>
+          {user ? (
+            <UserMenu name={user.displayName} />
+          ) : (
+            <>
+              <Link href="/login" className="text-sm font-medium text-brand hover:text-accent">
+                {t('login')}
+              </Link>
+              <Link href="/register" className="text-sm font-medium text-brand hover:text-accent">
+                {t('register')}
+              </Link>
+            </>
+          )}
           <LanguageSwitcher />
         </nav>
       </div>

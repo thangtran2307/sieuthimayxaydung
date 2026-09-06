@@ -7,7 +7,34 @@
     "search": "Search machinery",
     "postListing": "Post a listing",
     "login": "Log in",
+    "register": "Register",
+    "logout": "Log out",
     "language": "Language"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "displayName": "Display name",
+    "phone": "Phone (optional)",
+    "locationProvince": "Province (optional)",
+    "login": {
+      "title": "Log in",
+      "submit": "Log in",
+      "noAccount": "Don’t have an account?",
+      "registerLink": "Register"
+    },
+    "register": {
+      "title": "Create a seller account",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in"
+    },
+    "errors": {
+      "invalidCredentials": "Incorrect email or password.",
+      "emailInUse": "An account with this email already exists.",
+      "validation": "Please check the form and try again.",
+      "generic": "Something went wrong. Please try again."
+    }
   },
   "home": {
     "heroTitle": "Buy and sell construction machinery",
