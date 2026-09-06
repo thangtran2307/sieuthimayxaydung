@@ -107,11 +107,12 @@ internal sealed class ListingQueries(ReadDbConnectionFactory connectionFactory, 
                 $"""
                 SELECT
                     l.id, l.slug, l.title, l.price_amount, l.price_contact, l.currency,
-                    l.condition, l.location_province, l.created_at,
-                    c.slug AS category_slug,
+                    l.condition, l.location_province,
                     (SELECT p.url FROM listing_photos p
                      WHERE p.listing_id = l.id ORDER BY p.sort_order LIMIT 1) AS thumbnail_url,
-                    (b.priority_level IS NOT NULL) AS boosted
+                    (b.priority_level IS NOT NULL) AS boosted,
+                    c.slug AS category_slug,
+                    l.created_at
                 {SearchFrom}
                 {ActiveBoostJoin}
                 /**where**/
@@ -200,12 +201,15 @@ internal sealed class ListingQueries(ReadDbConnectionFactory connectionFactory, 
         Guid sellerId,
         CancellationToken cancellationToken = default)
     {
+        // Column order MUST match the SellerListingDto constructor — Dapper binds a positional record
+        // by parameter position, not by name.
         const string sql = """
             SELECT
                 l.id, l.slug, l.title, l.status, l.price_amount, l.price_contact, l.currency,
-                l.view_count, l.created_at, l.published_at,
+                l.view_count,
                 (SELECT p.url FROM listing_photos p
-                 WHERE p.listing_id = l.id ORDER BY p.sort_order LIMIT 1) AS thumbnail_url
+                 WHERE p.listing_id = l.id ORDER BY p.sort_order LIMIT 1) AS thumbnail_url,
+                l.created_at, l.published_at
             FROM listings l
             WHERE l.seller_id = @sellerId AND l.status <> 'REMOVED'
             ORDER BY l.created_at DESC

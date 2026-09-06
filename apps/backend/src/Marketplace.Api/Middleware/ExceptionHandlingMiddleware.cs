@@ -2,7 +2,8 @@ namespace Marketplace.Api.Middleware;
 
 /// <summary>
 /// Translates every unhandled exception into the standard error envelope
-/// `{ error: { code, message, details } }` and logs it (Constitution I &amp; III: consistent, loud).
+/// `{ error: { code, message, details } }` and logs it before responding (Constitution I &amp; III:
+/// consistent, loud) — 4xx client errors at Warning, 5xx server faults at Error.
 /// </summary>
 public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
@@ -14,21 +15,18 @@ public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Ex
         }
         catch (ValidationAppException ex)
         {
+            Log(context, ex, StatusCodes.Status422UnprocessableEntity, ex.Code);
             await WriteAsync(context, StatusCodes.Status422UnprocessableEntity, ex.Code, ex.Message, ex.Errors);
         }
         catch (AppException ex)
         {
             int status = MapStatus(ex);
-            if (status >= 500)
-            {
-                logger.LogError(ex, "Application error: {Code}", ex.Code);
-            }
-
+            Log(context, ex, status, ex.Code);
             await WriteAsync(context, status, ex.Code, ex.Message, null);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Unhandled exception");
+            Log(context, ex, StatusCodes.Status500InternalServerError, ErrorCodes.InternalError);
             await WriteAsync(
                 context,
                 StatusCodes.Status500InternalServerError,
@@ -36,6 +34,29 @@ public sealed class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Ex
                 "Something went wrong",
                 null);
         }
+    }
+
+    // Every exception is logged before the response is written so it can be reviewed later. Expected
+    // client errors (4xx) log at Warning; server faults (5xx) log at Error. The exception (with stack)
+    // is always attached.
+    private void Log(HttpContext context, Exception ex, int status, string code)
+    {
+        var level = status >= StatusCodes.Status500InternalServerError ? LogLevel.Error : LogLevel.Warning;
+
+        // Guard so the message arguments are only evaluated when this level is enabled (Sonar S6664).
+        if (!logger.IsEnabled(level))
+        {
+            return;
+        }
+
+        logger.Log(
+            level,
+            ex,
+            "Request {Method} {Path} failed with {Status} {Code}",
+            context.Request.Method,
+            context.Request.Path,
+            status,
+            code);
     }
 
     private static int MapStatus(AppException ex) => ex switch
