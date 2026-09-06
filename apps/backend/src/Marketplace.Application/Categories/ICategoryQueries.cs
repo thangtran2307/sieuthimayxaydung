@@ -4,4 +4,7 @@ namespace Marketplace.Application.Categories;
 public interface ICategoryQueries
 {
     Task<IReadOnlyList<CategoryDto>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Returns a single taxonomy node by id, or null when it does not exist.</summary>
+    Task<CategoryDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 }

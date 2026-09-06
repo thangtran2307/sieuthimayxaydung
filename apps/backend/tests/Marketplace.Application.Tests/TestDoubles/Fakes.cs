@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Marketplace.Application.Categories;
 using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Common.Models;
 using Marketplace.Application.Common.Persistence;
@@ -10,6 +11,34 @@ using Marketplace.Domain.Listings;
 using Marketplace.Domain.Reports;
 
 namespace Marketplace.Application.Tests.TestDoubles;
+
+/// <summary>In-memory category read side; nodes are looked up by id from a seeded list.</summary>
+internal sealed class FakeCategoryQueries : ICategoryQueries
+{
+    public List<CategoryDto> Categories { get; } = [];
+
+    /// <summary>Seeds a top-level category and returns its id.</summary>
+    public Guid AddCategory(Guid? id = null)
+    {
+        var categoryId = id ?? Guid.NewGuid();
+        Categories.Add(new CategoryDto(categoryId, "excavators", null, "Máy đào", "Excavators", "truck", 0));
+        return categoryId;
+    }
+
+    /// <summary>Seeds a subcategory under <paramref name="parentId"/> and returns its id.</summary>
+    public Guid AddSubcategory(Guid parentId, Guid? id = null)
+    {
+        var subId = id ?? Guid.NewGuid();
+        Categories.Add(new CategoryDto(subId, "crawler", parentId, "Bánh xích", "Crawler", null, 0));
+        return subId;
+    }
+
+    public Task<IReadOnlyList<CategoryDto>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<CategoryDto>>(Categories);
+
+    public Task<CategoryDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        Task.FromResult(Categories.FirstOrDefault(c => c.Id == id));
+}
 
 /// <summary>Fixed-time clock for deterministic tests.</summary>
 internal sealed class StubClock(DateTime now) : IClock

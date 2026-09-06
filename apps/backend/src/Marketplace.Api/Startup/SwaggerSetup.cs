@@ -17,6 +17,11 @@ internal static class SwaggerSetup
                     $"/swagger/{groupName}/swagger.json",
                     groupName.ToUpperInvariant());
             }
+
+            // Send cookies with "Try it out" requests so cookie auth works: call /auth/login, then the
+            // browser stores the httpOnly access_token cookie and attaches it to protected calls
+            // automatically (no need to paste a bearer token). Same-origin + SameSite=Lax allow this.
+            options.UseRequestInterceptor("(request) => { request.credentials = 'include'; return request; }");
         });
     }
 }

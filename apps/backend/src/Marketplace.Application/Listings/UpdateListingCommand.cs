@@ -1,4 +1,5 @@
 using FluentValidation;
+using Marketplace.Application.Categories;
 using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Common.Persistence;
 using Mediator;
@@ -37,15 +38,23 @@ public sealed record UpdateListingCommand(Guid ListingId, UpdateListingRequest B
 
 public sealed class UpdateListingCommandHandler(
     ICurrentUser currentUser,
+    ICategoryQueries categoryQueries,
     IUnitOfWork unitOfWork,
     IClock clock) : ICommandHandler<UpdateListingCommand>
 {
     public async ValueTask<Unit> Handle(UpdateListingCommand command, CancellationToken cancellationToken)
     {
+        // Ownership first (403/404 take precedence over payload validation), then the category check.
         var listing = await SellerListing.LoadOwnedAsync(
             unitOfWork,
             currentUser,
             command.ListingId,
+            cancellationToken);
+
+        await ListingCategory.EnsureValidAsync(
+            categoryQueries,
+            command.Body.CategoryId,
+            command.Body.SubcategoryId,
             cancellationToken);
 
         listing.UpdateDetails(command.Body.ToDetails(), clock.UtcNow);

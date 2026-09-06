@@ -10,13 +10,18 @@ public sealed class SellerListingOwnershipTests
 {
     private readonly Guid _sellerId = Guid.NewGuid();
     private readonly FakeCurrentUser _currentUser;
+    private readonly FakeCategoryQueries _categories = new();
     private readonly FakeUnitOfWork _unitOfWork = new();
     private readonly StubClock _clock = new(new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+    private readonly Guid _categoryId;
 
     public SellerListingOwnershipTests()
     {
         _currentUser = new FakeCurrentUser { UserId = _sellerId };
+        _categoryId = _categories.AddCategory();
     }
+
+    private UpdateListingCommandHandler UpdateHandler => new(_currentUser, _categories, _unitOfWork, _clock);
 
     private Listing OwnedListing(Guid ownerId) => Listing.Create(
         ownerId,
@@ -33,8 +38,8 @@ public sealed class SellerListingOwnershipTests
             new ListingSpecs()),
         _clock.UtcNow);
 
-    private static UpdateListingRequest UpdateBody() => new(
-        Guid.NewGuid(),
+    private UpdateListingRequest UpdateBody() => new(
+        _categoryId,
         null,
         "Updated",
         Condition.NEW,
@@ -50,8 +55,7 @@ public sealed class SellerListingOwnershipTests
         var listing = OwnedListing(_sellerId);
         _unitOfWork.Listings.ToReturn = listing;
 
-        var handler = new UpdateListingCommandHandler(_currentUser, _unitOfWork, _clock);
-        await handler.Handle(new UpdateListingCommand(listing.Id, UpdateBody()), CancellationToken.None);
+        await UpdateHandler.Handle(new UpdateListingCommand(listing.Id, UpdateBody()), CancellationToken.None);
 
         Assert.Equal("Updated", listing.Title);
         Assert.Equal(1, _unitOfWork.SaveChangesCallCount);
@@ -62,10 +66,8 @@ public sealed class SellerListingOwnershipTests
     {
         _unitOfWork.Listings.ToReturn = OwnedListing(Guid.NewGuid()); // different owner
 
-        var handler = new UpdateListingCommandHandler(_currentUser, _unitOfWork, _clock);
-
         var ex = await Assert.ThrowsAsync<ForbiddenException>(
-            () => handler.Handle(new UpdateListingCommand(Guid.NewGuid(), UpdateBody()), CancellationToken.None).AsTask());
+            () => UpdateHandler.Handle(new UpdateListingCommand(Guid.NewGuid(), UpdateBody()), CancellationToken.None).AsTask());
         Assert.Equal(ErrorCodes.NotListingOwner, ex.Code);
         Assert.Equal(0, _unitOfWork.SaveChangesCallCount);
     }
@@ -75,10 +77,8 @@ public sealed class SellerListingOwnershipTests
     {
         _unitOfWork.Listings.ToReturn = null;
 
-        var handler = new UpdateListingCommandHandler(_currentUser, _unitOfWork, _clock);
-
         var ex = await Assert.ThrowsAsync<NotFoundException>(
-            () => handler.Handle(new UpdateListingCommand(Guid.NewGuid(), UpdateBody()), CancellationToken.None).AsTask());
+            () => UpdateHandler.Handle(new UpdateListingCommand(Guid.NewGuid(), UpdateBody()), CancellationToken.None).AsTask());
         Assert.Equal(ErrorCodes.ListingNotFound, ex.Code);
     }
 

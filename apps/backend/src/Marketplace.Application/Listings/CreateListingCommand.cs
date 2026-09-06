@@ -1,4 +1,5 @@
 using FluentValidation;
+using Marketplace.Application.Categories;
 using Marketplace.Application.Common;
 using Marketplace.Application.Common.Auth;
 using Marketplace.Application.Common.Persistence;
@@ -45,6 +46,7 @@ public sealed record CreateListingCommand(CreateListingRequest Body) : ICommand<
 
 public sealed class CreateListingCommandHandler(
     ICurrentUser currentUser,
+    ICategoryQueries categoryQueries,
     IUnitOfWork unitOfWork,
     IClock clock) : ICommandHandler<CreateListingCommand, CreatedListingDto>
 {
@@ -54,6 +56,12 @@ public sealed class CreateListingCommandHandler(
     {
         var sellerId = currentUser.RequireUserId();
         var body = command.Body;
+
+        await ListingCategory.EnsureValidAsync(
+            categoryQueries,
+            body.CategoryId,
+            body.SubcategoryId,
+            cancellationToken);
 
         var listing = Listing.Create(sellerId, Slug.Generate(body.Title), body.ToDetails(), clock.UtcNow);
 

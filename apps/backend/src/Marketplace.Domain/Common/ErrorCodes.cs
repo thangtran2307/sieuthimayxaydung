@@ -13,6 +13,8 @@ public static class ErrorCodes
     public const string ListingNotFound = "LISTING_NOT_FOUND";
     public const string ListingNotPublic = "LISTING_NOT_PUBLIC";
     public const string NotListingOwner = "NOT_LISTING_OWNER";
+    public const string CategoryNotFound = "CATEGORY_NOT_FOUND";
+    public const string InvalidSubcategory = "INVALID_SUBCATEGORY";
     public const string EmailInUse = "EMAIL_IN_USE";
     public const string InvalidCredentials = "INVALID_CREDENTIALS";
     public const string BoostConflict = "BOOST_CONFLICT";

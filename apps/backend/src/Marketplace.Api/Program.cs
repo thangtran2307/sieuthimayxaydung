@@ -105,8 +105,11 @@ if (app.Environment.IsDevelopment())
     app.UseVersionedSwaggerUi();
 }
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+// Serilog is registered first so it is the OUTERMOST middleware: by the time the response flows back
+// out to it, the (inner) exception handler has already converted any exception to its real status
+// code (404/422/…), so the request log records that code instead of a raw 500.
 app.UseSerilogRequestLogging();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -19,4 +19,17 @@ internal sealed class CategoryQueries(ReadDbConnectionFactory connectionFactory)
             new CommandDefinition(sql, cancellationToken: cancellationToken));
         return rows.AsList();
     }
+
+    public async Task<CategoryDto> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        const string sql = """
+            SELECT id, slug, parent_id, label_vi, label_en, icon, sort_order
+            FROM categories
+            WHERE id = @id
+            """;
+
+        using var connection = connectionFactory.Create();
+        return await connection.QuerySingleOrDefaultAsync<CategoryDto>(
+            new CommandDefinition(sql, new { id }, cancellationToken: cancellationToken));
+    }
 }
