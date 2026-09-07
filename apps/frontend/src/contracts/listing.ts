@@ -39,6 +39,54 @@ export const listingSummarySchema = z.object({
 export type ListingSummary = z.infer<typeof listingSummarySchema>;
 
 /** Full public listing detail — mirrors the API `Listing`. */
+/** Technical specifications supplied on the listing form (all optional). */
+export const listingSpecsInputSchema = z.object({
+  year: z.number().int().optional(),
+  brand: z.string().optional(),
+  model: z.string().optional(),
+  hours: z.number().int().optional(),
+  origin: z.string().optional(),
+  capacity: z.string().optional(),
+});
+export type ListingSpecsInput = z.infer<typeof listingSpecsInputSchema>;
+
+/** A photo attached to a new listing (already-hosted URL; upload flow deferred). */
+export const listingPhotoInputSchema = z.object({
+  url: z.string().url(),
+  sortOrder: z.number().int(),
+  width: z.number().int().nullable().optional(),
+  height: z.number().int().nullable().optional(),
+});
+export type ListingPhotoInput = z.infer<typeof listingPhotoInputSchema>;
+
+/** Create-listing payload (mirrors the backend CreateListingRequest). At least one photo required. */
+export const createListingSchema = z
+  .object({
+    categoryId: z.string().uuid(),
+    subcategoryId: z.string().uuid().nullable().optional(),
+    title: z.string().min(1).max(200),
+    condition: Condition,
+    priceAmount: z.number().int().positive().nullable().optional(),
+    priceContact: z.boolean(),
+    locationProvince: z.string().min(1).max(120),
+    description: z.string().min(1).max(5000),
+    specs: listingSpecsInputSchema.optional(),
+    photos: z.array(listingPhotoInputSchema).min(1),
+  })
+  .refine((value) => value.priceContact || (value.priceAmount != null && value.priceAmount > 0), {
+    message: 'A price is required unless "contact for price" is selected.',
+    path: ['priceAmount'],
+  });
+export type CreateListingInput = z.infer<typeof createListingSchema>;
+
+/** Result of creating a listing. */
+export const createdListingSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  status: ListingStatus,
+});
+export type CreatedListing = z.infer<typeof createdListingSchema>;
+
 export const listingDetailSchema = z.object({
   id: z.string(),
   slug: z.string(),

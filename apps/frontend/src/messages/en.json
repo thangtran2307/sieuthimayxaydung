@@ -36,6 +36,47 @@
       "generic": "Something went wrong. Please try again."
     }
   },
+  "sell": {
+    "title": "Post a listing",
+    "subtitle": "Your listing will be reviewed before it goes public.",
+    "listingTitle": "Title",
+    "category": "Category",
+    "selectCategory": "Select a category",
+    "subcategory": "Subcategory",
+    "noSubcategory": "None",
+    "condition": "Condition",
+    "conditionNew": "New",
+    "conditionUsed": "Used",
+    "price": "Price (VND)",
+    "priceContact": "Contact for price",
+    "location": "Province / city",
+    "description": "Description",
+    "specsHeading": "Specifications (optional)",
+    "year": "Year",
+    "brand": "Brand",
+    "model": "Model",
+    "hours": "Operating hours",
+    "origin": "Origin",
+    "capacity": "Capacity",
+    "photos": "Photo URLs",
+    "photoUrl": "https://…",
+    "addPhoto": "Add photo",
+    "removePhoto": "Remove photo",
+    "submit": "Submit for review",
+    "success": {
+      "title": "Listing submitted",
+      "hint": "It’s pending review and will appear in search once approved.",
+      "postAnother": "Post another",
+      "home": "Back home"
+    },
+    "errors": {
+      "categoryNotFound": "The selected category is invalid.",
+      "invalidSubcategory": "The subcategory doesn’t belong to the selected category.",
+      "unauthenticated": "Your session has expired. Please log in again.",
+      "validation": "Please check the form and try again.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
   "home": {
     "heroTitle": "Buy and sell construction machinery",
     "heroSubtitle": "Excavators, forklifts, cranes, and parts from trusted sellers across Vietnam.",

@@ -36,6 +36,47 @@
       "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
+  "sell": {
+    "title": "Đăng tin",
+    "subtitle": "Tin đăng của bạn sẽ được duyệt trước khi hiển thị công khai.",
+    "listingTitle": "Tiêu đề",
+    "category": "Danh mục",
+    "selectCategory": "Chọn danh mục",
+    "subcategory": "Danh mục con",
+    "noSubcategory": "Không có",
+    "condition": "Tình trạng",
+    "conditionNew": "Mới",
+    "conditionUsed": "Đã qua sử dụng",
+    "price": "Giá (VND)",
+    "priceContact": "Liên hệ để biết giá",
+    "location": "Tỉnh/Thành phố",
+    "description": "Mô tả",
+    "specsHeading": "Thông số kỹ thuật (tùy chọn)",
+    "year": "Năm sản xuất",
+    "brand": "Hãng",
+    "model": "Model",
+    "hours": "Số giờ hoạt động",
+    "origin": "Xuất xứ",
+    "capacity": "Công suất",
+    "photos": "Đường dẫn ảnh",
+    "photoUrl": "https://…",
+    "addPhoto": "Thêm ảnh",
+    "removePhoto": "Xóa ảnh",
+    "submit": "Gửi duyệt",
+    "success": {
+      "title": "Đã gửi tin đăng",
+      "hint": "Tin đang chờ duyệt và sẽ xuất hiện trong tìm kiếm sau khi được phê duyệt.",
+      "postAnother": "Đăng tin khác",
+      "home": "Về trang chủ"
+    },
+    "errors": {
+      "categoryNotFound": "Danh mục đã chọn không hợp lệ.",
+      "invalidSubcategory": "Danh mục con không thuộc danh mục đã chọn.",
+      "unauthenticated": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+      "validation": "Vui lòng kiểm tra lại thông tin.",
+      "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
+  },
   "home": {
     "heroTitle": "Mua bán máy móc xây dựng",
     "heroSubtitle": "Máy đào, xe nâng, cần cẩu và phụ tùng từ người bán uy tín trên toàn quốc.",

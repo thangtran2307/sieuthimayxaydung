@@ -33,19 +33,33 @@ export async function apiFetch<T>(
     cache: 'no-store',
   });
 
-  const json: unknown = await res.json().catch(() => null);
+  return parseApiResponse(res, path, schema);
+}
 
-  if (!res.ok) {
+/**
+ * Shared response handling for every backend call (used by {@link apiFetch} and the server-side
+ * authed fetch): validates a success body against the contract schema, or parses the error envelope
+ * into a typed {@link ApiError}. Callers differ only in transport (public/isomorphic vs authed
+ * server-only), not in how responses are interpreted.
+ */
+export async function parseApiResponse<T>(
+  response: Response,
+  path: string,
+  schema: z.ZodType<T>,
+): Promise<T> {
+  const json: unknown = await response.json().catch(() => null);
+
+  if (!response.ok) {
     const parsed = errorEnvelopeSchema.safeParse(json);
     if (parsed.success) {
       throw new ApiError(
         parsed.data.error.code,
         parsed.data.error.message,
-        res.status,
+        response.status,
         parsed.data.error.details,
       );
     }
-    throw new ApiError('INTERNAL_ERROR', `Request to ${path} failed`, res.status, json);
+    throw new ApiError('INTERNAL_ERROR', `Request to ${path} failed`, response.status, json);
   }
 
   return schema.parse(json);
