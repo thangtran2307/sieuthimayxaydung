@@ -72,6 +72,8 @@ internal sealed class FakeListingQueries : IListingQueries
 
     public IReadOnlyList<SellerListingDto> SellerListingsResult { get; set; } = [];
 
+    public SellerListingDetailDto SellerListingResult { get; set; }
+
     public Task<PagedResult<ListingSummaryDto>> SearchAsync(
         ListingSearchCriteria criteria,
         CancellationToken cancellationToken = default)
@@ -92,6 +94,15 @@ internal sealed class FakeListingQueries : IListingQueries
     {
         CapturedSellerId = sellerId;
         return Task.FromResult(SellerListingsResult);
+    }
+
+    public Task<SellerListingDetailDto> GetSellerListingAsync(
+        Guid sellerId,
+        Guid listingId,
+        CancellationToken cancellationToken = default)
+    {
+        CapturedSellerId = sellerId;
+        return Task.FromResult(SellerListingResult);
     }
 }
 

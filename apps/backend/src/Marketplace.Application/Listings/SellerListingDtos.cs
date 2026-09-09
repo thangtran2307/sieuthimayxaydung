@@ -28,3 +28,29 @@ public sealed record SellerListingDto(
     string ThumbnailUrl,
     DateTime CreatedAt,
     DateTime? PublishedAt);
+
+/// <summary>Read-back of a listing's technical specifications for the edit form.</summary>
+public sealed record ListingSpecsDto(
+    int? Year,
+    string Brand,
+    string Model,
+    int? Hours,
+    string Origin,
+    string Capacity);
+
+/// <summary>
+/// The current editable state of a seller's own listing, used to pre-fill the edit form. Photos are
+/// not included — photo management is a separate concern from <see cref="UpdateListingCommand"/>.
+/// </summary>
+public sealed record SellerListingDetailDto(
+    Guid Id,
+    Guid CategoryId,
+    Guid? SubcategoryId,
+    string Title,
+    Condition Condition,
+    long? PriceAmount,
+    bool PriceContact,
+    string LocationProvince,
+    string Description,
+    ListingSpecsDto Specs,
+    ListingStatus Status);

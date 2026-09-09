@@ -9,7 +9,31 @@
     "login": "Đăng nhập",
     "register": "Đăng ký",
     "logout": "Đăng xuất",
+    "dashboard": "Tin của tôi",
     "language": "Ngôn ngữ"
+  },
+  "dashboard": {
+    "title": "Tin của tôi",
+    "newListing": "Đăng tin",
+    "priceContact": "Liên hệ để biết giá",
+    "views": "{count} lượt xem",
+    "edit": "Sửa",
+    "markSold": "Đánh dấu đã bán",
+    "delete": "Xóa tin",
+    "confirmDelete": "Xóa tin đăng này? Hành động không thể hoàn tác.",
+    "actionError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "emptyTitle": "Chưa có tin đăng",
+    "emptyHint": "Đăng tin đầu tiên để bắt đầu bán hàng.",
+    "errorTitle": "Không tải được tin đăng của bạn",
+    "errorHint": "Dịch vụ tạm thời không khả dụng. Vui lòng thử lại sau.",
+    "status": {
+      "PENDING": "Chờ duyệt",
+      "ACTIVE": "Đang hiển thị",
+      "REJECTED": "Bị từ chối",
+      "SOLD": "Đã bán",
+      "EXPIRED": "Hết hạn",
+      "REMOVED": "Đã gỡ"
+    }
   },
   "auth": {
     "email": "Email",
@@ -38,6 +62,8 @@
   },
   "sell": {
     "title": "Đăng tin",
+    "editTitle": "Sửa tin đăng",
+    "saveChanges": "Lưu thay đổi",
     "subtitle": "Tin đăng của bạn sẽ được duyệt trước khi hiển thị công khai.",
     "listingTitle": "Tiêu đề",
     "category": "Danh mục",

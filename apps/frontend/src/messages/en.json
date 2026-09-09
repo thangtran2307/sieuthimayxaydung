@@ -9,7 +9,31 @@
     "login": "Log in",
     "register": "Register",
     "logout": "Log out",
+    "dashboard": "My listings",
     "language": "Language"
+  },
+  "dashboard": {
+    "title": "My listings",
+    "newListing": "Post a listing",
+    "priceContact": "Contact for price",
+    "views": "{count} views",
+    "edit": "Edit",
+    "markSold": "Mark sold",
+    "delete": "Delete listing",
+    "confirmDelete": "Delete this listing? This cannot be undone.",
+    "actionError": "Something went wrong. Please try again.",
+    "emptyTitle": "No listings yet",
+    "emptyHint": "Post your first listing to start selling.",
+    "errorTitle": "Couldn’t load your listings",
+    "errorHint": "The service is unavailable. Please try again shortly.",
+    "status": {
+      "PENDING": "Pending review",
+      "ACTIVE": "Active",
+      "REJECTED": "Rejected",
+      "SOLD": "Sold",
+      "EXPIRED": "Expired",
+      "REMOVED": "Removed"
+    }
   },
   "auth": {
     "email": "Email",
@@ -38,6 +62,8 @@
   },
   "sell": {
     "title": "Post a listing",
+    "editTitle": "Edit listing",
+    "saveChanges": "Save changes",
     "subtitle": "Your listing will be reviewed before it goes public.",
     "listingTitle": "Title",
     "category": "Category",

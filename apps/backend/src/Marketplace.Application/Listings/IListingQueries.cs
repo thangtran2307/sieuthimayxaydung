@@ -22,4 +22,13 @@ public interface IListingQueries
     Task<IReadOnlyList<SellerListingDto>> GetSellerListingsAsync(
         Guid sellerId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns the editable state of a seller's own listing (scoped to the owner), or null when it
+    /// does not exist or belongs to someone else. Used to pre-fill the edit form.
+    /// </summary>
+    Task<SellerListingDetailDto> GetSellerListingAsync(
+        Guid sellerId,
+        Guid listingId,
+        CancellationToken cancellationToken = default);
 }

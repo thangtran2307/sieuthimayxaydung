@@ -21,7 +21,12 @@ export async function Header() {
             {t('postListing')}
           </Link>
           {user ? (
-            <UserMenu name={user.displayName} />
+            <>
+              <Link href="/dashboard" className="text-sm font-medium text-brand hover:text-accent">
+                {t('dashboard')}
+              </Link>
+              <UserMenu name={user.displayName} />
+            </>
           ) : (
             <>
               <Link href="/login" className="text-sm font-medium text-brand hover:text-accent">

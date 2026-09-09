@@ -223,6 +223,43 @@ internal sealed class ListingQueries(ReadDbConnectionFactory connectionFactory, 
         return rows.AsList();
     }
 
+    public async Task<SellerListingDetailDto> GetSellerListingAsync(
+        Guid sellerId,
+        Guid listingId,
+        CancellationToken cancellationToken = default)
+    {
+        // Scoped to the owner: a listing that is missing or owned by someone else returns null.
+        const string sql = """
+            SELECT
+                l.id, l.category_id, l.subcategory_id, l.title, l.condition,
+                l.price_amount, l.price_contact, l.location_province, l.description,
+                l.specs::text AS specs_json, l.status
+            FROM listings l
+            WHERE l.id = @listingId AND l.seller_id = @sellerId
+            """;
+
+        using var connection = connectionFactory.Create();
+        var row = await connection.QuerySingleOrDefaultAsync<SellerListingDetailRow>(new CommandDefinition(
+            sql,
+            new { sellerId, listingId },
+            cancellationToken: cancellationToken));
+
+        return row is null
+            ? null
+            : new SellerListingDetailDto(
+            row.Id,
+            row.CategoryId,
+            row.SubcategoryId,
+            row.Title,
+            row.Condition,
+            row.PriceAmount,
+            row.PriceContact,
+            row.LocationProvince,
+            row.Description,
+            ParseSpecsDto(row.SpecsJson),
+            row.Status);
+    }
+
     public async Task<ListingContact> GetListingContactAsync(
         Guid listingId,
         CancellationToken cancellationToken = default)
@@ -268,6 +305,15 @@ internal sealed class ListingQueries(ReadDbConnectionFactory connectionFactory, 
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
 
+    // Case-insensitive so the parse is robust to the JSON key casing EF uses for the owned Specs type.
+    private static readonly JsonSerializerOptions SpecsDtoOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private static ListingSpecsDto ParseSpecsDto(string specsJson) =>
+        string.IsNullOrWhiteSpace(specsJson)
+            ? new ListingSpecsDto(null, null, null, null, null, null)
+            : JsonSerializer.Deserialize<ListingSpecsDto>(specsJson, SpecsDtoOptions)
+              ?? new ListingSpecsDto(null, null, null, null, null, null);
+
     private static async Task<CategoryDto> GetCategoryAsync(
         IDbConnection connection,
         Guid id,
@@ -298,43 +344,44 @@ internal sealed class ListingQueries(ReadDbConnectionFactory connectionFactory, 
         return rows.AsList();
     }
 
-    /// <summary>Flat projection of the listing detail row before related entities are attached.</summary>
-    private sealed class ListingDetailRow
-    {
-        public Guid Id { get; init; }
+    /// <summary>
+    /// Flat projection of the listing detail row before related entities are attached. Positional
+    /// record — the parameter order MUST match the GetBySlugAsync SELECT (Dapper binds by position).
+    /// </summary>
+    private sealed record ListingDetailRow(
+        Guid Id,
+        string Slug,
+        string Title,
+        Condition Condition,
+        long? PriceAmount,
+        bool PriceContact,
+        string Currency,
+        string LocationProvince,
+        string Description,
+        string SpecsJson,
+        ListingStatus Status,
+        int ViewCount,
+        DateTime CreatedAt,
+        DateTime? PublishedAt,
+        Guid CategoryId,
+        Guid? SubcategoryId,
+        Guid SellerId,
+        bool Boosted);
 
-        public string Slug { get; init; }
-
-        public string Title { get; init; }
-
-        public Condition Condition { get; init; }
-
-        public long? PriceAmount { get; init; }
-
-        public bool PriceContact { get; init; }
-
-        public string Currency { get; init; }
-
-        public string LocationProvince { get; init; }
-
-        public string Description { get; init; }
-
-        public string SpecsJson { get; init; }
-
-        public ListingStatus Status { get; init; }
-
-        public int ViewCount { get; init; }
-
-        public DateTime CreatedAt { get; init; }
-
-        public DateTime? PublishedAt { get; init; }
-
-        public Guid CategoryId { get; init; }
-
-        public Guid? SubcategoryId { get; init; }
-
-        public Guid SellerId { get; init; }
-
-        public bool Boosted { get; init; }
-    }
+    /// <summary>
+    /// Flat projection of a seller's own listing for the edit form. Positional record — the parameter
+    /// order MUST match the GetSellerListingAsync SELECT (Dapper binds by position).
+    /// </summary>
+    private sealed record SellerListingDetailRow(
+        Guid Id,
+        Guid CategoryId,
+        Guid? SubcategoryId,
+        string Title,
+        Condition Condition,
+        long? PriceAmount,
+        bool PriceContact,
+        string LocationProvince,
+        string Description,
+        string SpecsJson,
+        ListingStatus Status);
 }

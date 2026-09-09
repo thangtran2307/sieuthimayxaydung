@@ -87,6 +87,64 @@ export const createdListingSchema = z.object({
 });
 export type CreatedListing = z.infer<typeof createdListingSchema>;
 
+/** Current editable state of a seller's own listing, used to pre-fill the edit form. */
+export const sellerListingDetailSchema = z.object({
+  id: z.string(),
+  categoryId: z.string(),
+  subcategoryId: z.string().nullable(),
+  title: z.string(),
+  condition: Condition,
+  priceAmount: z.number().nullable(),
+  priceContact: z.boolean(),
+  locationProvince: z.string(),
+  description: z.string(),
+  specs: z.object({
+    year: z.number().nullable(),
+    brand: z.string().nullable(),
+    model: z.string().nullable(),
+    hours: z.number().nullable(),
+    origin: z.string().nullable(),
+    capacity: z.string().nullable(),
+  }),
+  status: ListingStatus,
+});
+export type SellerListingDetail = z.infer<typeof sellerListingDetailSchema>;
+
+/** Update-listing payload (mirrors the backend UpdateListingRequest — photos are not editable). */
+export const updateListingSchema = z
+  .object({
+    categoryId: z.string().uuid(),
+    subcategoryId: z.string().uuid().nullable().optional(),
+    title: z.string().min(1).max(200),
+    condition: Condition,
+    priceAmount: z.number().int().positive().nullable().optional(),
+    priceContact: z.boolean(),
+    locationProvince: z.string().min(1).max(120),
+    description: z.string().min(1).max(5000),
+    specs: listingSpecsInputSchema.optional(),
+  })
+  .refine((value) => value.priceContact || (value.priceAmount != null && value.priceAmount > 0), {
+    message: 'A price is required unless "contact for price" is selected.',
+    path: ['priceAmount'],
+  });
+export type UpdateListingInput = z.infer<typeof updateListingSchema>;
+
+/** A row in the seller's own dashboard — includes non-public statuses (mirrors SellerListingDto). */
+export const sellerListingSchema = z.object({
+  id: z.string(),
+  slug: z.string(),
+  title: z.string(),
+  status: ListingStatus,
+  priceAmount: z.number().nullable(),
+  priceContact: z.boolean(),
+  currency: z.string(),
+  viewCount: z.number().int(),
+  thumbnailUrl: z.string().nullable(),
+  createdAt: z.string(),
+  publishedAt: z.string().nullable(),
+});
+export type SellerListing = z.infer<typeof sellerListingSchema>;
+
 export const listingDetailSchema = z.object({
   id: z.string(),
   slug: z.string(),

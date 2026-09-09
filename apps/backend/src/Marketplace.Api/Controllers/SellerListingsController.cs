@@ -31,6 +31,11 @@ public sealed class SellerListingsController(IMediator mediator) : ControllerBas
     public async Task<IReadOnlyList<SellerListingDto>> Mine(CancellationToken cancellationToken) =>
         await mediator.Send(new GetMyListingsQuery(), cancellationToken);
 
+    /// <summary>Loads one of the current seller's own listings to pre-fill the edit form.</summary>
+    [HttpGet("{id:guid}")]
+    public async Task<SellerListingDetailDto> Get(Guid id, CancellationToken cancellationToken) =>
+        await mediator.Send(new GetSellerListingQuery(id), cancellationToken);
+
     /// <summary>Edits one of the current seller's listings.</summary>
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(
