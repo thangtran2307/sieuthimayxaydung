@@ -10,6 +10,9 @@ public interface IRepository<T>
 {
     Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
+    /// <summary>Loads all aggregates matching the predicate in a single query (e.g. for bulk actions).</summary>
+    Task<IReadOnlyList<T>> ListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
+
     Task AddAsync(T entity, CancellationToken cancellationToken = default);
 
     void Update(T entity);

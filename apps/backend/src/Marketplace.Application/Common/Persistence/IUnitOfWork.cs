@@ -1,6 +1,7 @@
 using Marketplace.Domain.Identities;
 using Marketplace.Domain.Inquiries;
 using Marketplace.Domain.Listings;
+using Marketplace.Domain.ModerationDecisions;
 using Marketplace.Domain.Reports;
 
 namespace Marketplace.Application.Common.Persistence;
@@ -20,6 +21,8 @@ public interface IUnitOfWork
     IInquiryRepository InquiryRepository { get; }
 
     IReportRepository ReportRepository { get; }
+
+    IModerationDecisionRepository ModerationDecisionRepository { get; }
 
     /// <summary>Persists all tracked changes and returns the number of affected rows.</summary>
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);

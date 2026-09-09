@@ -22,7 +22,7 @@ public sealed class MarkListingSoldCommandHandler(
 
         listing.MarkSold(clock.UtcNow);
 
-        unitOfWork.ListingRepository.Update(listing);
+        // Tracked entity — the change tracker persists the mutation on save (no explicit Update).
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

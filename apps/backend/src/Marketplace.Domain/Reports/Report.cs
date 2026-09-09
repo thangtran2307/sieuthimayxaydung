@@ -35,4 +35,25 @@ public class Report : Entity<Guid>, IAggregateRoot
             Status = ReportStatus.OPEN,
             CreatedAt = now,
         };
+
+    /// <summary>
+    /// Resolves an open report — either after removing the listing (RESOLVED_REMOVED) or clearing it
+    /// (RESOLVED_CLEARED). Records which admin resolved it and when (FR-021, FR-030).
+    /// </summary>
+    public void Resolve(Guid adminId, ReportStatus resolution, DateTime now)
+    {
+        if (Status != ReportStatus.OPEN)
+        {
+            throw new DomainRuleException("Only an open report can be resolved.");
+        }
+
+        if (resolution is not (ReportStatus.RESOLVED_REMOVED or ReportStatus.RESOLVED_CLEARED))
+        {
+            throw new DomainRuleException("A report must be resolved as removed or cleared.");
+        }
+
+        Status = resolution;
+        ResolvedByAdminId = adminId;
+        ResolvedAt = now;
+    }
 }

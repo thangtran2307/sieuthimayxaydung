@@ -127,4 +127,46 @@ public sealed class ListingTests
 
         Assert.Equal(ListingStatus.REMOVED, listing.Status);
     }
+
+    [Fact]
+    public void Approve_publishes_a_pending_listing()
+    {
+        var listing = NewListing();
+        var now = _now.AddHours(2);
+
+        listing.Approve(now);
+
+        Assert.Equal(ListingStatus.ACTIVE, listing.Status);
+        Assert.Equal(now, listing.PublishedAt);
+        Assert.Equal(now, listing.UpdatedAt);
+    }
+
+    [Fact]
+    public void Approve_throws_when_not_pending()
+    {
+        var listing = NewListing();
+        listing.Approve(_now);
+
+        Assert.Throws<DomainRuleException>(() => listing.Approve(_now));
+    }
+
+    [Fact]
+    public void Reject_marks_a_pending_listing_rejected()
+    {
+        var listing = NewListing();
+
+        listing.Reject(_now);
+
+        Assert.Equal(ListingStatus.REJECTED, listing.Status);
+        Assert.Null(listing.PublishedAt);
+    }
+
+    [Fact]
+    public void Reject_throws_when_not_pending()
+    {
+        var listing = NewListing();
+        listing.Approve(_now);
+
+        Assert.Throws<DomainRuleException>(() => listing.Reject(_now));
+    }
 }

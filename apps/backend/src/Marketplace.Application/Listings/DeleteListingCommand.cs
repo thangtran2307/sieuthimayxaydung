@@ -25,7 +25,8 @@ public sealed class DeleteListingCommandHandler(
 
         listing.Remove(clock.UtcNow);
 
-        unitOfWork.ListingRepository.Update(listing);
+        // The listing is tracked (loaded via the repository), so the change tracker persists the
+        // mutation on save — no explicit Update needed.
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

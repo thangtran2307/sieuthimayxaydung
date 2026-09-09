@@ -12,4 +12,20 @@ public class ModerationDecision : Entity<Guid>, IAggregateRoot
     public string Reason { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
+
+    /// <summary>Records an admin's moderation action on a listing (immutable audit trail, FR-030).</summary>
+    public static ModerationDecision Create(
+        Guid listingId,
+        Guid adminId,
+        ModerationAction decision,
+        DateTime now,
+        string reason = null) => new()
+        {
+            Id = Guid.NewGuid(),
+            ListingId = listingId,
+            AdminId = adminId,
+            Decision = decision,
+            Reason = reason,
+            CreatedAt = now,
+        };
 }

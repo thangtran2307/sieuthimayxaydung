@@ -5,13 +5,29 @@ using Marketplace.Application.Common.Models;
 using Marketplace.Application.Common.Persistence;
 using Marketplace.Application.Identities;
 using Marketplace.Application.Listings;
+using Marketplace.Application.Moderation;
 using Marketplace.Domain.Common;
 using Marketplace.Domain.Identities;
 using Marketplace.Domain.Inquiries;
 using Marketplace.Domain.Listings;
+using Marketplace.Domain.ModerationDecisions;
 using Marketplace.Domain.Reports;
 
 namespace Marketplace.Application.Tests.TestDoubles;
+
+/// <summary>In-memory read side for the moderation views.</summary>
+internal sealed class FakeModerationQueries : IModerationQueries
+{
+    public IReadOnlyList<ModerationQueueItemDto> PendingResult { get; set; } = [];
+
+    public IReadOnlyList<ReportDto> ReportsResult { get; set; } = [];
+
+    public Task<IReadOnlyList<ModerationQueueItemDto>> GetPendingListingsAsync(
+        CancellationToken cancellationToken = default) => Task.FromResult(PendingResult);
+
+    public Task<IReadOnlyList<ReportDto>> GetOpenReportsAsync(
+        CancellationToken cancellationToken = default) => Task.FromResult(ReportsResult);
+}
 
 /// <summary>In-memory user read side.</summary>
 internal sealed class FakeUserQueries : IUserQueries
@@ -114,8 +130,14 @@ internal class FakeRepository<T> : IRepository<T>
 
     public T ToReturn { get; set; }
 
+    /// <summary>Rows returned (filtered by the predicate) from <see cref="ListAsync"/>.</summary>
+    public List<T> Items { get; } = [];
+
     public Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default) =>
         Task.FromResult(ToReturn);
+
+    public Task<IReadOnlyList<T>> ListAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<T>>(Items.Where(predicate.Compile()).ToList());
 
     public Task AddAsync(T entity, CancellationToken cancellationToken = default)
     {
@@ -136,6 +158,9 @@ internal sealed class FakeInquiryRepository : FakeRepository<Inquiry>, IInquiryR
 
 internal sealed class FakeReportRepository : FakeRepository<Report>, IReportRepository;
 
+internal sealed class FakeModerationDecisionRepository
+    : FakeRepository<ModerationDecision>, IModerationDecisionRepository;
+
 /// <summary>In-memory unit of work exposing the fake repositories and counting commits.</summary>
 internal sealed class FakeUnitOfWork : IUnitOfWork
 {
@@ -147,6 +172,8 @@ internal sealed class FakeUnitOfWork : IUnitOfWork
 
     public FakeReportRepository Reports { get; } = new();
 
+    public FakeModerationDecisionRepository ModerationDecisions { get; } = new();
+
     public int SaveChangesCallCount { get; private set; }
 
     IUserRepository IUnitOfWork.UserRepository => Users;
@@ -156,6 +183,8 @@ internal sealed class FakeUnitOfWork : IUnitOfWork
     IInquiryRepository IUnitOfWork.InquiryRepository => Inquiries;
 
     IReportRepository IUnitOfWork.ReportRepository => Reports;
+
+    IModerationDecisionRepository IUnitOfWork.ModerationDecisionRepository => ModerationDecisions;
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

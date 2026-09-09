@@ -14,6 +14,11 @@ internal abstract class BaseEfRepository<T>(MarketplaceDbContext dbContext) : IR
         CancellationToken cancellationToken = default) =>
         await DbContext.Set<T>().FirstOrDefaultAsync(predicate, cancellationToken);
 
+    public async Task<IReadOnlyList<T>> ListAsync(
+        Expression<Func<T, bool>> predicate,
+        CancellationToken cancellationToken = default) =>
+        await DbContext.Set<T>().Where(predicate).ToListAsync(cancellationToken);
+
     public async Task AddAsync(T entity, CancellationToken cancellationToken = default) =>
         await DbContext.Set<T>().AddAsync(entity, cancellationToken);
 

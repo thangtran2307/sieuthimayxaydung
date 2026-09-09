@@ -104,10 +104,35 @@ public class Listing : Entity<Guid>, IAggregateRoot
         UpdatedAt = now;
     }
 
-    /// <summary>Soft-deletes the listing (seller removal); the row is retained for audit (FR-030).</summary>
+    /// <summary>Soft-deletes the listing (seller or admin removal); the row is retained for audit (FR-030).</summary>
     public void Remove(DateTime now)
     {
         Status = ListingStatus.REMOVED;
+        UpdatedAt = now;
+    }
+
+    /// <summary>Admin approves a pending listing, making it public and searchable (FR-020).</summary>
+    public void Approve(DateTime now)
+    {
+        if (Status != ListingStatus.PENDING)
+        {
+            throw new DomainRuleException("Only a pending listing can be approved.");
+        }
+
+        Status = ListingStatus.ACTIVE;
+        PublishedAt = now;
+        UpdatedAt = now;
+    }
+
+    /// <summary>Admin rejects a pending listing; it does not become public (FR-020).</summary>
+    public void Reject(DateTime now)
+    {
+        if (Status != ListingStatus.PENDING)
+        {
+            throw new DomainRuleException("Only a pending listing can be rejected.");
+        }
+
+        Status = ListingStatus.REJECTED;
         UpdatedAt = now;
     }
 
