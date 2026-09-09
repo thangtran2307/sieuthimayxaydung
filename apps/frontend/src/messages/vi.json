@@ -10,7 +10,34 @@
     "register": "Đăng ký",
     "logout": "Đăng xuất",
     "dashboard": "Tin của tôi",
+    "moderation": "Kiểm duyệt",
     "language": "Ngôn ngữ"
+  },
+  "moderation": {
+    "title": "Kiểm duyệt",
+    "queueTab": "Tin chờ duyệt",
+    "reportsTab": "Báo cáo",
+    "queueEmpty": "Không có tin nào chờ duyệt.",
+    "reportsEmpty": "Không có báo cáo nào.",
+    "selectAll": "Chọn tất cả",
+    "selectedCount": "Đã chọn {count}",
+    "selectListing": "Chọn {title}",
+    "approve": "Duyệt",
+    "reject": "Từ chối",
+    "remove": "Gỡ",
+    "removeListing": "Gỡ tin",
+    "clear": "Bỏ qua",
+    "priceContact": "Liên hệ để biết giá",
+    "confirmRemove": "Gỡ tin đăng này? Hành động không thể hoàn tác.",
+    "bulkResult": "Đã cập nhật {succeeded}, bỏ qua {skipped}.",
+    "actionError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "reasons": {
+      "FRAUD": "Lừa đảo",
+      "INCORRECT_INFO": "Thông tin sai lệch",
+      "SPAM": "Thư rác",
+      "PROHIBITED": "Hàng cấm",
+      "OTHER": "Khác"
+    }
   },
   "dashboard": {
     "title": "Tin của tôi",

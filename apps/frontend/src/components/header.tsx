@@ -22,9 +22,15 @@ export async function Header() {
           </Link>
           {user ? (
             <>
-              <Link href="/dashboard" className="text-sm font-medium text-brand hover:text-accent">
-                {t('dashboard')}
-              </Link>
+              {user.role === 'ADMIN' ? (
+                <Link href="/moderation" className="text-sm font-medium text-brand hover:text-accent">
+                  {t('moderation')}
+                </Link>
+              ) : (
+                <Link href="/dashboard" className="text-sm font-medium text-brand hover:text-accent">
+                  {t('dashboard')}
+                </Link>
+              )}
               <UserMenu name={user.displayName} />
             </>
           ) : (

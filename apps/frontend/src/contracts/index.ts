@@ -13,4 +13,5 @@ export * from './category';
 export * from './listing';
 export * from './inquiry';
 export * from './report';
+export * from './moderation';
 export * from './search';

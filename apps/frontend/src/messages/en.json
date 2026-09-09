@@ -10,7 +10,34 @@
     "register": "Register",
     "logout": "Log out",
     "dashboard": "My listings",
+    "moderation": "Moderation",
     "language": "Language"
+  },
+  "moderation": {
+    "title": "Moderation",
+    "queueTab": "Pending listings",
+    "reportsTab": "Reports",
+    "queueEmpty": "Nothing awaiting review.",
+    "reportsEmpty": "No open reports.",
+    "selectAll": "Select all",
+    "selectedCount": "{count} selected",
+    "selectListing": "Select {title}",
+    "approve": "Approve",
+    "reject": "Reject",
+    "remove": "Remove",
+    "removeListing": "Remove listing",
+    "clear": "Clear",
+    "priceContact": "Contact for price",
+    "confirmRemove": "Remove this listing? This cannot be undone.",
+    "bulkResult": "{succeeded} updated, {skipped} skipped.",
+    "actionError": "Something went wrong. Please try again.",
+    "reasons": {
+      "FRAUD": "Fraud or scam",
+      "INCORRECT_INFO": "Incorrect information",
+      "SPAM": "Spam",
+      "PROHIBITED": "Prohibited item",
+      "OTHER": "Other"
+    }
   },
   "dashboard": {
     "title": "My listings",
